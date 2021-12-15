@@ -1,0 +1,48 @@
+CONCERNANT LE GAMEPLAY :
+
+MAJ 1 : RECHERCHE DE MOTS
+L'utilisateur peut lancer une partie avec //mot pour trouver un mot aléatoire de la bibliothèque.
+L'utilisateur connait uniquement le nombre de lettres
+
+MAJ 2 : AJOUT DE LA PREMIÈRE LETTRE
+L'utilisateur connait la première lettre du mot et elle est ajoutée lors de l'affichage du mot.
+
+MAJ 3 : GOTTA CATCHEM' ALL !
+Les pokémons sont de sortie. Avec //pokemon ou //pkm, vous pouvez jouer à la version pokémon de motus !
+
+
+NOMBRE DE MOT MOTUS : 273
+NOMBRE DE POKÉMON : 493 (Générations 1 à 4)
+
+
+CONCERNANT LES MAJS EXTÉRIEURES :
+
+MAJ 1 : GRILLE POUR LE MOT
+Le mot est séparé dans des cases pour chaque lettre.
+
+MAJ 2 : SYSTÈME DE SCORE V1
+Stockage du nombre de points des utilisateurs et possibilité de voir son score avec //score.
+
+MAJ 3 : CLASSEMENT DES SCORES (ScoresV1)
+Grâce à //score all, l'utilisateur peut voir le classement de tous les joueurs avec leurs points.
+
+MAJ 4 : CHANGELOGS ET LISTE DES COMMANDES
+Avec //changelog et les commandes //commands et //help, une personne peut voir les modifications du bot et les règles.
+
+MAJ 5 : PERTE DE POINTS (ScoresV1.1)
+Le //abandon fait perdre dorénavant 3 points (ou vous met à 0 si vous avez moins de 3 points).
+
+MAJ 6 : CESSESSION ENTRE POKÉMON ET MOTUS (ScoresV2)
+Désormais, vous devrez mettre des points dans les deux jeux pour flex.
+
+MAJ 7 : TIQUETAQUE
+Vous n'avez plus que 10 minutes pour trouver le mot, après cela vous perdrez 1 point.
+
+MAJ 8 : PL TON ROXNNIS
+La commande //suggestion vient d'apparaître pour donner des idées pour le bot (ne sert à rien de dire "Plus de mot" ou encore "Y a un problème" car ça concerne pas la commande).
+
+MAJ 9 : CHANGELOG CHEZ VOS MARCHANDS DE JOURNAUX
+Personne ne regarde les changelogs mais dorénavant les changelogs seront sous forme de .txt car la limite de caractère a été atteinte.
+
+MAJ 10 : MAN VS WILD 
+Le //mot gagne une version free for all pour que tous le monde puisse jouer en même temps.

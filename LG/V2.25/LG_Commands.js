@@ -13,15 +13,6 @@ function Salon(message) {
     }
 }
 
-function SysOSEstMerde(SysOS){
-	if(SysOS === "Linux"){
-		return True;
-	} else {
-		return false;
-	}
-}
-
-
 //Permet de vérifier si la commande est faite dans le bon salon 
 function Detection(message) {
     if (message.content != LGRox.Config['prefix']+'salon') {

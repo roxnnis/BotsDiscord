@@ -1,0 +1,40 @@
+{
+  "salons": {
+    "commande": "624474305018855449",
+    "reponse": "624474248311734274"
+  },
+  "AuthorisedUsers": [
+    "306020612747427841",
+    "185352234580574208",
+    "360457586098700288"
+  ],
+  "cartes": {
+    "PartieDeTest": [
+      ["J1", "J2", "J3", "J4", "J5", "J6"],
+      ["A1", "A2", "A3", "A4", "A5", "A6"],
+      ["L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9"]
+    ],
+    "SoireeCluedo": [
+      ["Roxnnis", "Dexhort", "Onii", "Amine", "Hytawo", "Bojack"],
+      [
+        "Ronpiche en vocal",
+        "Le bruit de fond",
+        "Paiement MP",
+        "Le Saint T1",
+        "Le Missclick",
+        "Le crash connexion"
+      ],
+      [
+        "Salon Live",
+        "Salon Event",
+        "Salon Discussion General",
+        "Salon Concert",
+        "Salon Reunion",
+        "Salon AFK",
+        "Salon Privé",
+        "Salon Hytawo",
+        "Salon Gaming"
+      ]
+    ]
+  }
+}

@@ -1,4 +1,7 @@
-//Fichiers
+// BOT CONFIGURATION
+// Contain Token
+const S = fs.readFileSync("../BotConfig.json");
+var SettBot = JSON.parse(S);
 
 //JSON
 const fs = require('fs');
@@ -19,7 +22,7 @@ exports.fs = fs;
 ///////////////////////////////////////////////////////////////////
 
 //Déclaration des variables globales
-var salonCree, messageCommande;
+var messageCommande;
 ////////////////////////////////////
 
 //Pré-config de parties
@@ -38,7 +41,7 @@ var PACKS =
 //Setup Bot (Assist-o-Bot)
 const { Client } = require('discord.js');
 bot = new Client();
-bot.login(Config.token);
+bot.login(SettBot.Token);
 //////////////////////////////////////////
 
 
@@ -49,7 +52,7 @@ bot.on('message', function (message) {
 	if (LG_Commands.Detection(message)) return;
 
 	//Choix du salon
-	if (message.content.toLowerCase() == "//salon") {
+	if (message.content.toLowerCase() == SettBot.Prefix+"salon") {
 		if (message.author.username == 'Roxnnis') {
 			LG_Commands.Salon(message)
 		} else {
@@ -59,7 +62,7 @@ bot.on('message', function (message) {
 	/////////////////////////////////////////////////////////////////////////////////////////
 
 	//Reset de la game
-	if (message.content.toLowerCase() == "//reset" && message.author.username == 'Roxnnis') {
+	if (message.content.toLowerCase() == SettBot.Prefix+"reset" && message.author.username == 'Roxnnis') {
 		if (message.author.username == 'Roxnnis') {
 			LG_Commands.Clear();
 			message.channel.send("La partie vient d'être réinitialisée.");
@@ -88,7 +91,7 @@ const descriptions = JSON.parse(json);*/
 //Start : Demande de join
 bot.on('message', function (message) {
 	if (LG_Commands.Detection(message)) return;
-	if (!message.content.toLowerCase().startsWith("//start")) return;
+	if (!message.content.toLowerCase().startsWith(SettBot.Prefix+"start")) return;
 	if (Config['state'] != 0) return;
 	if (message.author.username != 'Roxnnis') {
 		message.channel.send("Vous n'avez pas la permission de lancer la partie.");
@@ -104,7 +107,7 @@ bot.on('message', function (message) {
 bot.on('message', function (message) {
 	if (LG_Commands.Detection(message)) return;
 	if (Config['state'] != 1) return;
-	if (message.content.toLowerCase() == "//join") {
+	if (message.content.toLowerCase() == SettBot.Prefix+"join") {
 		if (Composition['players'].indexOf(message.author) != -1) return;
 		Composition['players'].push(message.author); Composition['nbJoueursPartie']++; message.channel.send(message.author.username + " vient de rejoindre la partie.");
 	}
@@ -113,7 +116,7 @@ bot.on('message', function (message) {
 //Membres : Voir la liste des joueurs
 bot.on('message', function (message) {
 	if (LG_Commands.Detection(message)) return;
-	if (message.content == "//membres") {
+	if (message.content == SettBot.Prefix+"membres") {
 		membres = ""
 		for (var i = 0; i < Composition['players'].length; i++) {
 			membres += Composition['players'][i].username + "\n";
@@ -133,7 +136,7 @@ function AfficheCommandes(message) {
 //help : Affiche les commandes
 bot.on('message', function (message) {
 	if (LG_Commands.Detection(message)) return;
-	if (message.content != "//help") return;
+	if (message.content != SettBot.Prefix+"help") return;
 	AfficheCommandes(message)
 })
 
@@ -153,7 +156,7 @@ bot.on('message', function (message) {
 		AfficheCommandes(message);
 	}
 	if (Config['state'] == 2) {
-		if (messageCommande[0] != "//compo") return;
+		if (messageCommande[0] != SettBot.Prefix+"compo") return;
 
 		//Add : Ajoute un rôle de la compo
 		if (messageCommande[1] == "add") {
@@ -163,7 +166,6 @@ bot.on('message', function (message) {
 			}
 			message.channel.send("Le rôle " + info[0] + " vient d'être ajouté " + i + " fois.");
 		}
-
 
 		//Gradd : Groupe un type de rôle //gradd Cupidon 
 		if (message.content.toLowerCase().slice(8).startsWith("gradd")) {
@@ -253,7 +255,7 @@ function grouping(listeJoueurs) {
 //Tirage : Randomize la partie et attribue les rôles aux personnes
 bot.on('message', function (message) {
 	if (LG_Commands.Detection(message)) return;
-	if (message.content.toLowerCase() !== "//tirage") return;
+	if (message.content.toLowerCase() !== SettBot.Prefix+"tirage") return;
 	if (Config['state'] != 2) return;
 	if (Composition['players'].length != Composition['listeRole'].length) {
 		message.channel.send('Le nombre de rôles (' + Composition['players'].length + ') est différent du nombre de joueurs (' + Composition['listeRole'].length + ').');

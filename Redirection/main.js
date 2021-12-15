@@ -3,7 +3,7 @@
 const S = fs.readFileSync("../BotConfig.json");
 var SettBot = JSON.parse(S);
 
-const { Client, Intents, InviteGuild, Message } = require("discord.js");
+const {Client, Intents} = require("discord.js");
 const bot = new Client({
   intents: [
     Intents.FLAGS.GUILDS,

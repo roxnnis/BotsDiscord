@@ -9,7 +9,5 @@ const Classes = require('./classes.js');
 
 //Log
 Gens = new Classes.Personnage()
-Gens.getName();
-Gens.getPV();
-Gens.getPoids();
-Gens.getStats();
+Gens.editNom("Bob");
+console.log(Gens.getNom());

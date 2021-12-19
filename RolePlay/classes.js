@@ -1,5 +1,7 @@
 //Classes
 
+const { UserFlags } = require("discord.js");
+
 //STATS
 //-------------------------------------------------
 class Stats {
@@ -90,8 +92,11 @@ class Personnage {
 
     //Calcul des PV
     if (this.#STATS["PHY"] != 0 || this.#STATS["MEN"] != 0)
-      this.#PV = {"Actuel":this.#STATS["PHY"] * 2 + this.#STATS["MEN"], "Total":this.#STATS["PHY"] * 2 + this.#STATS["MEN"]};
-    else this.#PV = 1;
+      this.#PV = {
+        Actuel: this.#STATS["PHY"] * 2 + this.#STATS["MEN"],
+        Total: this.#STATS["PHY"] * 2 + this.#STATS["MEN"],
+      };
+    else this.#PV = { Actuel: 1, Total: 1 };
 
     //Armes et Armures
     this.#WEAPONS = [];
@@ -99,13 +104,13 @@ class Personnage {
 
     for (var key in Armes) {
       this.#WEAPONS.push(Armes[key]);
-	  //Ajout du poids de l'arme
+      //Ajout du poids de l'arme
       this.#POIDS += Armes[key]["Poids"];
     }
 
     for (var key in Armures) {
       this.#ARMORS.push(Armures[key]);
-	  //Ajout du poids de l'armure
+      //Ajout du poids de l'armure
       this.#POIDS += Armures[key]["Poids"];
     }
 
@@ -123,7 +128,7 @@ class Personnage {
       },
     };
 
-	//Ajout du poids de l'inventaire
+    //Ajout du poids de l'inventaire
     for (var key in this.#INV) {
       if (this.#INV[key]["Poids"] != undefined) {
         this.#POIDS += this.#INV[key]["Poids"];
@@ -131,31 +136,59 @@ class Personnage {
     }
   }
 
-  //Afficher le nom
-  getName() {
-    console.log(`Nom du personnage : ${this.#NOM}`);
+  //Obtenir le nom
+  getNom() {
+    return this.#NOM;
   }
 
-  //Afficher le poids
+  //Changer le nom
+  editNom(name) {
+	try{
+		if(typeof name != "string") 
+			throw "Bad type" 
+		else if (name == "") 
+			throw "Bad length"
+		else
+			return this.#NOM = name.substring(0,31);
+	} catch(err) {
+		if (err == "Bad type")
+			console.log("Erreur : Mauvais type de variable d'entrée indiqué.");
+		else if (err == "Bad length")
+			console.log("Erreur : La longueur du nom donné est insuffisante.");
+	}
+  }
+
+  //Obtenir le niveau
+  getLVL() {
+    return this.#LVL;
+  }
+
+  //Obtenir le poids
   getPoids() {
-    console.log(`Poids du personnage : ${this.#POIDS}kg`);
+    return this.#POIDS;
   }
 
-  //Afficher les PV
-  getPV() {
-	console.log(`Points de Vie du personnage : ${this.#PV} / ${this.#PV}`);
+  //Obtenir les PV
+  getPV(type = "All") {
+    if (type === "Actuel") return {Actuel:this.#PV.Actuel};
+    else if (type === "Total") return {Total:this.#PV.Total};
+    else if (type === "All") return {Actuel:this.#PV.Actuel, Total:this.#PV.Total}
   }
 
-  //Afficher les Stats
+  //Obtenir l'argent
+  getMoney() {
+    return this.#MONEY;
+  }
+
+  //Obtenir les Stats
   getStats() {
-    console.log("Statistiques du personnage : ");
-    console.log();
-    
-    console.log("Physique      | ", this.#STATS["PHY"]);
-    console.log("Mental        | ", this.#STATS["MEN"]);
-    console.log("Intelligence  | ", this.#STATS["INT"]);
-    console.log("Social        | ", this.#STATS["SOC"]);
-    console.log("Chance        | ", this.#STATS["CHA"]);
+    return {
+      PHY: this.#STATS["PHY"],
+      MEN: this.#STATS["MEN"],
+      INT: this.#STATS["INT"],
+      SOC: this.#STATS["SOC"],
+      CHA: this.#STATS["CHA"],
+    };
   }
 }
 

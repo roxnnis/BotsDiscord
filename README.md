@@ -21,4 +21,8 @@ All my bots for Discord (Javascript)
 ## Redirection
 - When a user joins a guild, give him a specific role according to the link used
 
-**All games are in french**
+## TRPG
+- Specific code used for our TRPG
+- Useful until Dexhort decide to work on the Unity version ;D
+
+**All games are in french (Comments in programs and rules too ― if exists ― ;D)**

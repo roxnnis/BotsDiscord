@@ -8,5 +8,7 @@ var SettBot = JSON.parse(S);
 const Classes = require('./classes.js');
 
 //Logs
-Gens = new Classes.Personnage({Stats:new Classes.Stats({phy:10,int:12,soc:22,cha:2}),LVL:7});
-console.table(Gens.Stats)
+Poulet = Classes.Shop.Armes['Revolver composite'];
+KFC = Classes.Shop.Armes['Epée longue']
+Gens = new Classes.Personnage({Weapons:{Arme1:Poulet,Arme2:KFC},Stats:new Classes.Stats({phy:10,int:12,soc:22,cha:2}),LVL:7});
+console.log(Gens.Weapons)

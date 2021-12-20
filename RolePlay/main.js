@@ -7,7 +7,6 @@ var SettBot = JSON.parse(S);
 //Requires
 const Classes = require('./classes.js');
 
-//Log
-Gens = new Classes.Personnage()
-Gens.editNom("Bob");
-console.log(Gens.getNom());
+//Logs
+Gens = new Classes.Personnage({Stats:new Classes.Stats({phy:10,int:12,soc:22,cha:2}),LVL:7});
+console.table(Gens.Stats)

@@ -32,7 +32,6 @@ var TimerInfos = 0, TimerChangelog = 0, TimerHelp = 0, TimerScorePokemon = 0, Ti
 
 //Accès JSON
 const fs = require('fs');
-const { resolveMx } = require('dns');
 var fichier = fs.readFileSync('Scores.json');
 var scores = JSON.parse(fichier);
 

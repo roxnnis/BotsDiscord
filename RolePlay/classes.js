@@ -51,7 +51,7 @@ class Stats {
 //-------------------------------------------------
 class Armes {
   //#region Caractéristiques privées de base
-  #NOM = "Arme";
+  #NOM = "Aucune";
   #TYPE = "None";
   #HAND = 0;
   #WEIGHT = 0;
@@ -223,7 +223,6 @@ class Personnage {
   #MONEY = 1000;
 
   #STATS = new Stats();
-  //{ Arme1: { Nom: "Aucune", Poids: 12 } };
   #WEAPONS = new Armes();
   #ARMORS = { Armure1: { Nom: "Aucun", Poids: 6 } };
   #DCM = "Aucun";

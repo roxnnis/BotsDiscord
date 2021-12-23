@@ -1,5 +1,6 @@
 // BOT CONFIGURATION
 // Contain Token
+const fs = require('fs');
 const S = fs.readFileSync("../BotConfig.json");
 var SettBot = JSON.parse(S);
 
@@ -18,15 +19,29 @@ bot.login(SettBot.Token);
 const { promisify } = require("util");
 const wait = promisify(setTimeout);
 
-const idTokami = "908996618861297674"; //ID du serveur
-const invitTkm = "FvCbndNef7"; //Invitation Tokami
-const invitPwx = "CbNvspUdc6"; //Invitation Piwex
+const idTokami = "659767673898663948"; //ID du serveur
+const invitTkm = "5CsmwzyKT7"; //Invitation Tokami
+const roleTkm = "921891191031738378";
+const invitPwx = "G5Czm7CfNa"; //Invitation Piwex
+const rolePwx = "922059977705816075";
+const invitTsn = "qjvAz5mVEC"; //Invitation TsunoKawaii
+const roleTsn = "922061022431436810";
+const invitNyl = "DuSuSKqgpU"; //Invitation Neyyl
+const roleNyl = "922062589637328897";
+const invitGdr = "TeZwF834HG"; //Invitation GeekDraw
+const roleGdr = "922063588275916880";
+const invitSbo = "UdHQwq83RK"; //Invitation Sibyo
+const roleSbo = "922067218299224124";
 
-//Ta
+//Carte des liaisons entre les invitations et les rôles à donner
 const rolesMember = new Map([
-	[invitTkm, "914196106710229042"],
-	[invitPwx, "914196805955239956"]
-])
+	[invitTkm, roleTkm],
+	[invitPwx, rolePwx],
+	[invitTsn, roleTsn],
+	[invitNyl, roleNyl],
+	[invitGdr, roleGdr],
+	[invitSbo, roleSbo]
+]);
 
 let invitations;
 

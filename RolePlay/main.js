@@ -14,7 +14,7 @@ KFC = Classes.Shop.Armes['Epée longue']
 
 //Persos
 Roxnnis = new Classes.Personnage({Nom:"Roxnnis",Weapons:{Principale:KFC,Auxiliaire:new Classes.Armes()}, Stats:new Classes.Stats({phy:10,int:12,soc:22,cha:2}),LVL:7});
-Dexhort = new Classes.Personnage({Nom:"MJ",Weapons:{Principale:Poulet,Auxiliaire:Poulet}, Stats:new Classes.Stats({phy:69,men:69,int:69,soc:69,cha:69}),LVL:96});
+Dexhort = new Classes.Personnage({Nom:"MJ",Weapons:{Principale:Poulet,Auxiliaire:new Classes.Armes()}, Stats:new Classes.Stats({phy:69,men:69,int:69,soc:69,cha:69}),LVL:96});
 
 //JSON lecture
 const Pers = fs.readFileSync('./Personnages.json');

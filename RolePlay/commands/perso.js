@@ -43,6 +43,13 @@ module.exports = {
 		{
 			EmbArmes += "\r\nMunitions : " + rolistes[NomDonne].Weapons.Principale.Munitions.Chargeur.toString() + " + " + rolistes[NomDonne].Weapons.Principale.Munitions.Reserve.toString()
 		}
+		//Effets
+		EmbArmes += "\r\nEffet(s) : "
+		for(var key in rolistes[NomDonne].Weapons.Principale.Effects){
+			EmbArmes += "\r\n> " + key + " : " + rolistes[NomDonne].Weapons.Principale.Effects[key];
+		}
+		
+
 		if(rolistes[NomDonne].Weapons.Auxiliaire.Nom !== "Aucune"){
 		//Auxiliaire
 		EmbArmes += "\r\n\r\n__Secondaire :__\r\nNom : " + rolistes[NomDonne].Weapons.Auxiliaire.Nom + "\r\nType : " + rolistes[NomDonne].Weapons.Auxiliaire.Type + "\r\nMains : " + rolistes[NomDonne].Weapons.Auxiliaire.Hand + "\r\nPoids : " + rolistes[NomDonne].Weapons.Auxiliaire.Weight + "\r\nDégâts : " + rolistes[NomDonne].Weapons.Auxiliaire.Damage + "\r\nPrécision : " + rolistes[NomDonne].Weapons.Auxiliaire.Precision;
@@ -51,6 +58,11 @@ module.exports = {
 		if(typeof rolistes[NomDonne].Weapons.Auxiliaire.Munitions !== "undefined")
 		{
 			EmbArmes += "\r\nMunitions : " + rolistes[NomDonne].Weapons.Auxiliaire.Munitions.Chargeur.toString() + " + " + rolistes[NomDonne].Weapons.Auxiliaire.Munitions.Reserve.toString();
+		}
+		//Effets
+		EmbArmes += "\r\nEffet(s) : "
+		for(var key in rolistes[NomDonne].Weapons.Auxiliaire.Effects){
+			EmbArmes += "\r\n> " + key + " : " + rolistes[NomDonne].Weapons.Auxiliaire.Effects[key];
 		}}
 
 		//Ajout des Armes dans l'Embed

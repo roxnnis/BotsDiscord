@@ -17,8 +17,10 @@ class Stats {
       int = this.#INT,
       soc = this.#SOC,
       cha = this.#CHA,
-    } = {} //#endregion
-  ) //#region Variables appliquées au constructeur
+    } = {} 
+	//#endregion
+  //#region Variables appliquées au constructeur
+  ) 
   {
     this.#PHY = phy;
     this.#MEN = men;
@@ -70,8 +72,10 @@ class Armes {
       Damage = this.#DAMAGE,
       Precision = this.#PRECISION,
       Effects = this.#EFFECTS,
-    } = {} //#endregion
-  ) //#region Variables appliquées au constructeur
+    } = {} 
+	//#endregion
+  //#region Variables appliquées au constructeur
+  ) 
   {
     //Nom
     this.#NOM = Nom;
@@ -163,6 +167,20 @@ class Armes {
   //#endregion
 }
 
+//ARMURES
+//-------------------------------------------------
+class Armures {
+  //#region Caractéristiques privées de base
+  
+  //endregion
+  //#region Constructeur
+  //endregion
+  //#region Variables appliquées au constructeur
+  //endregion
+  //#region Fonctions utilisables sur le Personnage
+  //endregion
+}
+
 //ECHOPPE
 const Shop = {
   Armes: {
@@ -204,7 +222,7 @@ const Shop = {
       Weight: 5,
       Damage: 10,
       Precision: 40,
-      Effects: { "Mi-Distance": "+20 de précision à Mi-distance d'une cible." },
+      Effects: { "Mi-Distance": "+20 de précision à mi-distance d'une cible.", "Longue-Distance": "+30 de précision à longue distance d'une cible." },
 	}),
   },
   Armures: {},

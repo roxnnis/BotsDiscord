@@ -1,10 +1,9 @@
 // BOT CONFIGURATION
 // Contain Token
-const S = fs.readFileSync("../BotConfig.json");
+const fs = require('fs');
+const S = fs.readFileSync("../../BotConfig.json");
 var SettBot = JSON.parse(S);
 
-//JSON
-const fs = require('fs');
 
 var fichier = fs.readFileSync("./JSON/Config.json");
 var fichier2 = fs.readFileSync("./JSON/Composition.json");
@@ -39,8 +38,16 @@ var PACKS =
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Setup Bot (Assist-o-Bot)
-const { Client } = require('discord.js');
-bot = new Client();
+const { Client, Intents } = require('discord.js');
+const bot = new Client({
+	intents: [
+	  Intents.FLAGS.GUILDS,
+	  Intents.FLAGS.GUILD_MESSAGES,
+	  Intents.FLAGS.GUILD_MEMBERS,
+	  Intents.FLAGS.GUILD_PRESENCES,
+	  Intents.FLAGS.DIRECT_MESSAGES
+	],
+  });
 bot.login(SettBot.Token);
 //////////////////////////////////////////
 
@@ -279,7 +286,7 @@ bot.on('message', function (message) {
 	//Distribution :
 	for (let i = 0; i < Composition['nbJoueursPartie']; i++) {
 		users[i].send(`Rôle : ${Composition['listeRole'][i]}`);
-		bot.users.get(Config['gamemaster']).send(`${users[i].username} est ${Composition['listeRole'][i]}`);
+		bot.users.cache.get(Config['gamemaster']).send(`${users[i].username} est ${Composition['listeRole'][i]}`);
 	}
 
 	if (Composition['group'].length != -1) {

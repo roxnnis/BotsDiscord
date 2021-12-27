@@ -8,27 +8,41 @@ var SettBot = JSON.parse(S);
 const Classes = require("./classes.js");
 const Shop = require("./shop.js");
 
+//SALON JDR
+const salonJDR = ["624474305018855449"]
+
 //#region Création de personnages
 //Variables d'armes (pour aller plus vite)
 Poulet = Shop.Shop.Armes["Revolver composite"];
 KFC = Shop.Shop.Armes["Epée longue"];
-Tenders = Shop.Shop.Armures["Toison de sniper en vif ardent"];
+Tenders = Shop.Shop.Armures["Toison de sniper"];
 
 //Persos
 Roxnnis = new Classes.Personnage({
 	Nom: "Roxnnis",
 	LVL: 2,
-	Money:3827,
-	Stats: new Classes.Stats({ phy: 5, men:13, int: 14, soc: 4, cha: 5 }),
-	Weapons: { Principale: Poulet, Auxiliaire: new Classes.Armes()},
-	Armors: {Principale:Tenders}
+	Money: 3827,
+	Stats: new Classes.Stats({ phy: 5, men: 13, int: 14, soc: 4, cha: 5 }),
+	Weapons: { Principale: Poulet, Auxiliaire: new Classes.Armes() },
+	Armors: { Principale: Tenders },
+	INV: new Classes.Inventaire()
 });
 
 Dexhort = new Classes.Personnage({
 	Nom: "MJ",
 	Weapons: { Principale: Poulet, Auxiliaire: new Classes.Armes() },
 	Stats: new Classes.Stats({ phy: 69, men: 69, int: 69, soc: 69, cha: 69 }),
-	LVL: 96,
+	LVL: 96
+});
+
+Côtelette = new Classes.Personnage({
+	Nom: "BeafSteak",
+	LVL: 2,
+	Money: 0,
+	Stats: new Classes.Stats({ men: 13, int: 10, cha: 12 }),
+	Weapons: { Principale: new Classes.Armes(), Auxiliaire: new Classes.Armes() },
+	Armors: { Principale: new Classes.Armures() },
+	INV: new Classes.Inventaire()
 });
 
 //JSON lecture
@@ -43,7 +57,8 @@ rolistes["Roxnnis"] = {
 	PV: Roxnnis.PV,
 	Stats: Roxnnis.Stats,
 	Weapons: Roxnnis.Weapons,
-	Armors: Roxnnis.Armors
+	Armors: Roxnnis.Armors,
+	INV: Roxnnis.INV
 };
 
 rolistes["Dexhort"] = {
@@ -54,12 +69,27 @@ rolistes["Dexhort"] = {
 	PV: Dexhort.PV,
 	Stats: Dexhort.Stats,
 	Weapons: Dexhort.Weapons,
+	Armors: Dexhort.Armors,
+	INV: Dexhort.INV
+};
+
+rolistes["Côtelette"] = {
+	Nom: Côtelette.Nom,
+	LVL: Côtelette.LVL,
+	Money: Côtelette.Money,
+	Weight: Côtelette.Weight.Total,
+	PV: Côtelette.PV,
+	Stats: Côtelette.Stats,
+	Weapons: Côtelette.Weapons,
+	Armors: Côtelette.Armors,
+	INV: Dexhort.INV
 };
 
 //Écriture dans JSON
 fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
 
 //#endregion
+
 //#region Déclaration du bot
 const { Client, Intents, Collection, MessageEmbed } = require("discord.js");
 const bot = new Client({
@@ -88,9 +118,15 @@ for (const file of commandFiles) {
 bot.login(SettBot.Token);
 //#endregion
 
+//#region Commandes du Bot
 bot.on("interactionCreate", async (interaction) => {
-	if (!interaction.isCommand() || interaction.channelId != "624474305018855449")
-		return;
+	if (!interaction.isCommand() || !salonJDR.includes(interaction.channelId))
+		return interaction.reply(
+			{
+				content: "Vous n'avez pas le droit d'effectuer cette commande dans ce salon.",
+				ephemeral: true
+			}
+		);
 
 	const { commandName } = interaction;
 	const command = bot.commands.get(commandName);
@@ -107,3 +143,4 @@ bot.on("interactionCreate", async (interaction) => {
 		});
 	}
 });
+//#endregion

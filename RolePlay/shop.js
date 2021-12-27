@@ -89,15 +89,6 @@ const Shop = {
 				"Longue distance": "+30 de précision à longue distance d'une cible.",
 			},
 		}),
-		"Toison de sniper en vif ardent": new Classes.Armures({
-			Nom: "Toison de sniper en vif ardent",
-			Type: "Cuir",
-			Weight: 15,
-			Res: { PHY: 5, MEN: 5, OTHERS: { Feu: "-50% de dégâts du feu." } },
-			Effects: {
-				"Longue distance": "+30 de précision à longue distance d'une cible.",
-			},
-		}),
 		"Cuissard d'artilleur": new Classes.Armures({
 			Nom: "Cuissard d'artilleur",
 			Type: "Cuir",

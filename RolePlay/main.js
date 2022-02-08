@@ -25,8 +25,9 @@ Roxnnis = new Classes.Personnage({
 	Stats: new Classes.Stats({ phy: 5, men: 13, int: 14, soc: 4, cha: 5 }),
 	Weapons: { Principale: Poulet, Auxiliaire: new Classes.Armes() },
 	Armors: { Principale: Tenders },
-	INV: new Classes.Inventaire()
+	INV: new Classes.Inventaire({Items: {Courge: new Classes.Objet({ Nom: "Corde", Remain: 15, Unity: "m", Weight: 15 }),Courge2: new Classes.Objet({ Nom: "Cordes", Remain: 10, Unity: "m", Weight: 4 })}})
 });
+
 
 Dexhort = new Classes.Personnage({
 	Nom: "MJ",
@@ -42,7 +43,6 @@ Côtelette = new Classes.Personnage({
 	Stats: new Classes.Stats({ men: 13, int: 10, cha: 12 }),
 	Weapons: { Principale: new Classes.Armes(), Auxiliaire: new Classes.Armes() },
 	Armors: { Principale: new Classes.Armures() },
-	INV: new Classes.Inventaire()
 });
 
 //JSON lecture
@@ -58,7 +58,7 @@ rolistes["Roxnnis"] = {
 	Stats: Roxnnis.Stats,
 	Weapons: Roxnnis.Weapons,
 	Armors: Roxnnis.Armors,
-	INV: Roxnnis.INV
+	INV: Roxnnis.Inv
 };
 
 rolistes["Dexhort"] = {
@@ -70,7 +70,7 @@ rolistes["Dexhort"] = {
 	Stats: Dexhort.Stats,
 	Weapons: Dexhort.Weapons,
 	Armors: Dexhort.Armors,
-	INV: Dexhort.INV
+	INV: Dexhort.Inv
 };
 
 rolistes["Côtelette"] = {
@@ -82,7 +82,7 @@ rolistes["Côtelette"] = {
 	Stats: Côtelette.Stats,
 	Weapons: Côtelette.Weapons,
 	Armors: Côtelette.Armors,
-	INV: Dexhort.INV
+	INV: Dexhort.Inv
 };
 
 //Écriture dans JSON

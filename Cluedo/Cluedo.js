@@ -15,7 +15,7 @@ bot = new Client(
 		intents: [
 			Intents.FLAGS.GUILDS,
 			Intents.FLAGS.GUILD_MESSAGES,
-			Intents.FLAGS.GUILD_MESSAGE_REACTIONS,]
+			Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
 	});
 
 bot.login(SettBot.Token); // Initialisation du bot
@@ -104,39 +104,35 @@ bot.on('messageReactionAdd', (reaction, user) => {
 	}
 });
 
-bot.on('messageCreate', function(message){
-	console.log(Conditions(message));
-	console.log(!message.content.startsWith(SettBot.Prefix + "roll"));
-	if(Conditions(message) || !message.content.startsWith(SettBot.Prefix + "roll")) 
-	{ } 
-	else 
-	{
-		if (!PartieLancee) { 
-			console.log("salut");
-			message.channel.send("Vous avez lancé un : " + toString(Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6)));
-		} else {
-			console.log("bruh");
-			message.channel.send('La partie n\'a pas encore commencée.');
-		}
-	}
-	});
+// bot.on('messageCreate', function(message){
+// 	if(Conditions(message) || !message.content.startsWith(SettBot.Prefix + "roll")) 
+// 	{ } 
+// 	else 
+// 	{
+// 		if (!PartieLancee) { 
+// 			message.channel.send("Vous avez lancé un : " + toString(Math.floor(Math.random() * 6) + Math.floor(Math.random() * 6)));
+// 		} else {
+// 			message.channel.send('La partie n\'a pas encore commencée.');
+// 		}
+// 	}
+// 	});
 
-bot.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand() && !varJson.AuthorisedUsers.includes(interaction.author.id) && !PartieLancee) return;
+// bot.on('interactionCreate', async interaction => {
+// 	if (!interaction.isCommand() && !varJson.AuthorisedUsers.includes(interaction.author.id) && !PartieLancee) return;
 
-	if (interaction.commandName === 'start') {
-		const row = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('primary')
-					.setLabel('Rejoindre la partie')
-					.setStyle('PRIMARY'),
-			);
-				PartieLancee = True;
-		await interaction.reply({components: [row,row] });
-	}
-});
-//Fin : Récupération des joueurs
+// 	if (interaction.commandName === 'start') {
+// 		const row = new MessageActionRow()
+// 			.addComponents(
+// 				new MessageButton()
+// 					.setCustomId('primary')
+// 					.setLabel('Rejoindre la partie')
+// 					.setStyle('PRIMARY'),
+// 			);
+// 				PartieLancee = True;
+// 		await interaction.reply({components: [row,row] });
+// 	}
+// });
+// //Fin : Récupération des joueurs
 
 
 //Débuter la partie

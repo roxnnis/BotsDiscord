@@ -108,7 +108,7 @@ class Armes {
 		this.#EFFECTS = Effects;
 	}
 	//#endregion
-	//#region Fonctions utilisables sur le Personnage
+	//#region Fonctions utilisables sur l'arme
 	//Obtenir le Nom
 	get Nom() {
 		return this.#NOM;
@@ -219,7 +219,7 @@ class Armures {
 		this.#EFFECTS = Effects;
 	}
 	//#endregion
-	//#region Fonctions utilisables sur le Personnage
+	//#region Fonctions utilisables sur l'armure
 	//Obtenir le Nom
 	get Nom() {
 		return this.#NOM;
@@ -247,6 +247,276 @@ class Armures {
 	//#endregion
 }
 
+//OBJET
+//-------------------------------------------------
+class Objet {
+	//#region Caractéristiques privées de base
+	NOM = "Rien";
+	QUANTITY = 1;
+	REMAIN = 0;
+	UNITY = "None";
+	QUALITY = "None";
+	WEIGHT = 0;
+	DESCRIPTION = "Aucune";
+	//#endregion
+	//#region Constructeur
+	constructor(
+		{
+			Nom = this.NOM,
+			Quantity = this.QUANTITY,
+			Remain = this.REMAIN,
+			Unity = this.UNITY,
+			Quality = this.QUALITY,
+			Weight = this.WEIGHT,
+			Description = this.DESCRIPTION
+		} = {}
+		//#endregion
+		//#region Variables appliquées au constructeur
+	) {
+		//Nom
+		this.NOM = Nom;
+		//Quantité
+		this.QUANTITY = Quantity;
+		//Utilisations restantes
+		if (Remain != 0) {
+			this.REMAIN = Remain;
+			this.UNITY = Unity;
+		}
+		//Qualité
+		if (Quality != "None") {
+			this.QUALITY = Quality;
+		}
+		//Poids
+		this.WEIGHT = Weight;
+
+		//Description
+		if (Description != "Aucune") {
+			this.DESCRIPTION = Description;
+		}
+	}
+	//#endregion
+	//#region Fonctions utilisables sur l'objet
+	//Obtenir le Nom
+	get Nom() {
+		return this.NOM;
+	}
+	//Changer le Nom
+	set Nom(name) {
+		try {
+			if (typeof name != "string") throw "Bad type";
+			else if (name == "") throw "Bad length";
+			else this.NOM = name;
+		} catch (err) {
+			if (err == "Bad type") {
+				console.log("Erreur : Mauvais type de variable d'entrée indiqué.");
+				console.log("Demandé : String || Donné :", typeof name);
+			} else if (err == "Bad length")
+				console.log("Erreur : La longueur du nom donné est insuffisante.");
+		}
+	}
+
+	//Obtenir la Quantité
+	get Quantity() {
+		return this.QUANTITY;
+	}
+	//Changer la Quantite
+	set Quantity(qtt) {
+		try {
+			if (typeof qtt !== "number") throw "Bad type";
+			else if (qtt < 0 || !Number.isInteger(qtt)) throw "Not a positive integer";
+			else {
+				this.QUANTITY = qtt;
+				if (this.QUANTITY == 0) {
+					delete this;
+				}
+			}
+		} catch (err) {
+			if (err == "Bad type") {
+				console.log("Erreur : Mauvais type de variable d'entrée indiqué.");
+				console.log("Demandé : Nombre || Donné :", typeof qtt);
+			} else if (err == "Not a positive integer")
+				console.log("La valeur ne peut pas être négative ou à virgule.");
+		}
+	}
+
+	//Obtenir le Poids
+	get Weight() {
+		return this.WEIGHT;
+	}
+	set Weight(value) {
+
+	}
+
+	//Obtenir le Nombre d'utilisations restantes
+	get Remain() {
+		try {
+			if (typeof this.REMAIN !== "undefined") {
+				return this.REMAIN;
+			} else {
+				throw "Undefined variable"
+			}
+		} catch (err) {
+			if (err == "Undefined variable") {
+				console.log("\"Remain\" n'existe pas.");
+			}
+		}
+	}
+
+	//Obtenir l'unité
+	get Unity() {
+		try {
+			if (typeof this.UNITY !== "undefined") {
+				return this.UNITY
+			} else {
+				throw "Undefined variable"
+			}
+		} catch (err) {
+			if (err == "Undefined variable") {
+				console.log("\"Unity\" n'existe pas.");
+			}
+		}
+	}
+	//Changer l'unité
+	set Unity(name) {
+		try {
+			if (typeof name !== "string") throw "Bad type";
+			else if (name == "") throw "Bad length";
+			else this.UNITY = name;
+		} catch (err) {
+			if (err == "Bad type") {
+				console.log("Erreur : Mauvais type de variable d'entrée indiqué.");
+				console.log("Demandé : String || Donné :", typeof name);
+			} else if (err == "Bad length")
+				console.log("Erreur : La longueur du nom donné est insuffisante.");
+		}
+	}
+
+	//Changer le Nombre d'utilisations restantes
+	set Remain(qtt) {
+		try {
+			if (typeof qtt !== "number") throw "Bad type";
+			else if (qtt < 0) throw "Not a positive number"
+			else {
+				this.REMAIN = qtt;
+				if (this.REMAIN == 0) {
+					this.QUANTITY -= 1;
+				}
+			}
+		}
+		catch (err) {
+			if (err == "Bad type") {
+				console.log("Erreur : Mauvais type de variable d'entrée indiqué.");
+				console.log("Demandé : Nombre || Donné :", typeof qtt);
+			} else if (err == "Not a positive number") {
+				console.log("La valeur ne peut pas être négative.");
+			}
+		}
+	}
+
+	//Obtenir l'unité
+	get Unity() {
+		try {
+			if (typeof this.UNITY !== "undefined") {
+				return this.UNITY;
+			} else {
+				throw "Undefined variable"
+			}
+		} catch (err) {
+			if (err == "Undefined variable") {
+				console.log("\"Unity\" n'existe pas.");
+			}
+		}
+	}
+
+	//Obtenir la Qualité
+	get Quality() {
+		try {
+			if (typeof this.QUALITY !== "undefined") {
+				return this.QUALITY;
+			} else {
+				throw "Undefined variable"
+			}
+		} catch (err) {
+			if (err == "Undefined variable") {
+				console.log("\"Quality\" n'existe pas.");
+			}
+		}
+	}
+	//Obtenir la Description
+	get Description() {
+		try {
+			if (typeof this.DESCRIPTION !== "undefined") {
+				return this.DESCRIPTION;
+			} else {
+				throw "Undefined variable"
+			}
+		} catch (err) {
+			if (err == "Undefined variable") {
+				console.log("\"description\" n'existe pas.");
+			}
+		}
+	}
+	//#endregion
+}
+
+//INVENTAIRE
+//-------------------------------------------------
+class Inventaire {
+	//#region Caractéristiques privées de base
+	ITEMS = {};
+
+	//#endregion
+	//#region Constructeur
+	constructor({ Items = this.ITEMS } = {}) {
+
+		//Objets
+		if (Items == {}) {
+			this.ITEMS = {item1: new Objet()}
+		} else {
+			for (var key in Items) {
+				//Nom, Quantité et Poids (Nécessaire)
+				this.ITEMS[key] = {
+					Nom: Items[key].Nom,
+					Quantity: Items[key].Quantity,
+					Weight: Items[key].Weight
+				}
+				//Nombre d'utilisations multiple ?
+				if (typeof Items[key].Remain !== "undefined") {
+					this.ITEMS[key].Remain = Items[key].Remain
+					this.ITEMS[key].Unity = Items[key].Unity
+				}
+				//Qualité du produit ?
+				if (typeof Items[key].Quality !== "undefined") {
+					this.ITEMS[key].Quality = Items[key].Quality
+				}
+				//Description ?
+				if (typeof Items[key].Description !== "undefined") {
+					this.ITEMS[key].Description = Items[key].Description
+				}
+			}
+		}
+	}
+
+	//#endregion
+	//#region Fonctions utilisables sur l'inventaire
+	//Obtenir les Objets
+	get Items() {
+		objectItems = {}
+		for (var key in this.ITEMS) {
+			objectItems[key] = Items[key];
+		}
+		return objectItems;
+	}
+	//Ajouter un Objet
+	addItem() {
+	}
+	//Retirer un Objet
+	removeItem() {
+
+	}
+	//#endregion
+}
+
 //PERSONNAGE
 //-------------------------------------------------
 class Personnage {
@@ -260,10 +530,9 @@ class Personnage {
 	#STATS = new Stats();
 	#WEAPONS = new Armes();
 	#ARMORS = new Armures();
+	#INV = new Inventaire();
 	#DCM = "Aucun";
-	#INV = {
-		Slot1: "vide",
-	};
+
 	//#endregion
 	//#region Constructeur
 	constructor(
@@ -276,7 +545,9 @@ class Personnage {
 			Armors = this.#ARMORS,
 			DCM = this.#DCM,
 			INV = this.#INV,
-		} = {} //#endregion //#region Variables appliquées au constructeur
+		} = {}
+		//#endregion 
+		//#region Variables appliquées au constructeur
 	) {
 		//Nom
 		this.#NOM = Nom;
@@ -515,10 +786,20 @@ class Personnage {
 		}
 		return objectArmors;
 	}
+	//Obtenir l'inventaire
+	get Inv() {
+		var objectInv = {};
+		for (var key in this.#INV) {
+			objectInv[key] = this.#INV[key]
+		}
+		return objectInv;
+	}
 	//#endregion
 }
 
 exports.Stats = Stats;
 exports.Armes = Armes;
 exports.Armures = Armures;
+exports.Objet = Objet;
+exports.Inventaire = Inventaire;
 exports.Personnage = Personnage;

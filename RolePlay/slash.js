@@ -13,6 +13,7 @@ const guildId = ['342722397570465802',"659767673898663948"];
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	commands.push(command.data.toJSON());
+	commands.push(command.data2.toJSON());
 }
 
 const rest = new REST({ version: '9' }).setToken(Token);

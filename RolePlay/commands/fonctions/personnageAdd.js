@@ -1,6 +1,9 @@
-const Classes = require("../classes.js");
+const Classes = require("../../classes.js");
+//C:/Users/User/Documents/Bot Discord/BotsDiscord/RolePlay/
+const fs = require("fs");
 
-function PersoAdd(rolistes){
+function PersoAdd(rolistes, interaction){
+
 	tempo = new Classes.Personnage({
 		Nom: interaction.options.getString("nom"),
 		Stats: new Classes.Stats(
@@ -11,6 +14,7 @@ function PersoAdd(rolistes){
 				soc: interaction.options.getInteger("soc"),
 				cha: interaction.options.getInteger("cha")
 			}),
+		
 	});
 	
 	rolistes[tempo.Nom] = {
@@ -24,4 +28,8 @@ function PersoAdd(rolistes){
 		Armors: tempo.Armors,
 		Inv: tempo.Inv
 	};
+
+	fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
 }
+
+exports.PersoAdd = PersoAdd;

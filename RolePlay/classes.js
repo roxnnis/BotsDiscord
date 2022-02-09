@@ -205,7 +205,7 @@ class Armures {
 			Effects = this.#EFFECTS,
 		} = {}
 		//#endregion
-		//#region Variables appliquées au constructeur
+	//#region Variables appliquées au constructeur
 	) {
 		//Nom
 		this.#NOM = Nom;
@@ -271,7 +271,7 @@ class Objet {
 			Description = this.#DESCRIPTION
 		} = {}
 		//#endregion
-		//#region Variables appliquées au constructeur
+	//#region Variables appliquées au constructeur
 	) {
 		//Nom
 		this.#NOM = Nom;
@@ -490,9 +490,9 @@ class Personnage {
 	#MONEY = 1000;
 
 	#STATS = new Stats();
-	#WEAPONS = new Armes();
-	#ARMORS = new Armures();
-	#INV = new Objet();
+	#WEAPONS = {Principale : new Armes()}
+	#ARMORS = {Principale : new Armures()}
+	#INV = {};
 	#DCM = "Aucun";
 
 	//#endregion
@@ -509,7 +509,7 @@ class Personnage {
 			INV = this.#INV,
 		} = {}
 		//#endregion 
-		//#region Variables appliquées au constructeur
+	//#region Variables appliquées au constructeur
 	) {
 		//Nom
 		this.#NOM = Nom;
@@ -536,6 +536,7 @@ class Personnage {
 		else this.#PV = { Actuel: 1, Total: 1 };
 
 		//Récupérer les armes
+		
 		for (var key in Weapons) {
 			this.#WEAPONS[key] = {
 				Nom: Weapons[key].Nom,
@@ -545,9 +546,7 @@ class Personnage {
 				Damage: Weapons[key].Damage,
 				Precision: Weapons[key].Precision,
 			};
-			if (typeof Weapons[key].Effects["None"] === "undefined") {
 				this.#WEAPONS[key]["Effects"] = Weapons[key].Effects;
-			}
 			if (typeof Weapons[key].Munitions !== "undefined") {
 				this.#WEAPONS[key]["Munitions"] = Weapons[key].Munitions;
 			}
@@ -561,9 +560,8 @@ class Personnage {
 				Weight: Armors[key].Weight,
 				Res: Armors[key].Res,
 			}
-			if (typeof Armors[key].Effects["None"] === "undefined") {
-				this.#ARMORS[key]["Effects"] = Armors[key].Effects;
-			}
+			this.#ARMORS[key]["Effects"] = Armors[key].Effects;
+
 		}
 
 		//DCM

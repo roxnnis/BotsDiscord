@@ -1,6 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 
 function PersoInfo(rolistes){
+
 	//Requête par nom trouve une correspondance dans base JSON
 				embed = new MessageEmbed()
 					.setColor("AQUA")
@@ -86,7 +87,7 @@ function PersoInfo(rolistes){
 						rolistes[NomDonne].Weapons.Principale.Effects[key];
 				}
 
-				if (rolistes[NomDonne].Weapons.Auxiliaire.Nom !== "Aucune") {
+				if (typeof rolistes[NomDonne].Weapons.Auxiliaire !== "undefined") {
 					//Auxiliaire
 					EmbArmes +=
 						"\r\n\r\n__Secondaire :__\r\nNom : " +
@@ -165,26 +166,29 @@ function PersoInfo(rolistes){
 
 				//INVENTAIRE
 				var EmbInv = "";
-				console.log("223Per - ", rolistes[NomDonne].Inv);
-				for (var key in rolistes[NomDonne].Inv) {
-					EmbInv += rolistes[NomDonne].Inv[key].Quantity.toString() + "x " + rolistes[NomDonne].Inv[key].Nom;
-					//Nombre d'utilisations restantes ?
-					if (typeof rolistes[NomDonne].Inv[key].Remain !== "undefined") {
-						EmbInv += " (Remain : " + rolistes[NomDonne].Inv[key].Remain.toString() + rolistes[NomDonne].Inv[key].Unity + ")"
-					}
+				if(Object.keys(rolistes[NomDonne].Inv).length != 0){
+					for (var key in rolistes[NomDonne].Inv) {
+						EmbInv += rolistes[NomDonne].Inv[key].Quantity.toString() + "x " + rolistes[NomDonne].Inv[key].Nom;
+						//Nombre d'utilisations restantes ?
+						if (typeof rolistes[NomDonne].Inv[key].Remain !== "undefined") {
+							EmbInv += " (Remain : " + rolistes[NomDonne].Inv[key].Remain.toString() + rolistes[NomDonne].Inv[key].Unity + ")"
+						}
 
-					//Qualité ?
-					if (typeof rolistes[NomDonne].Inv[key].Quality !== "undefined") {
-						EmbInv += "\r\nÉtat : " + rolistes[NomDonne].Inv[key].Quality
-					}
+						//Qualité ?
+						if (typeof rolistes[NomDonne].Inv[key].Quality !== "undefined") {
+							EmbInv += "\r\nÉtat : " + rolistes[NomDonne].Inv[key].Quality
+						}
 
-					//Poids
-					EmbInv += "\r\nPoids : " + rolistes[NomDonne].Inv[key].Weight.toString() + "kg"
+						//Poids
+						EmbInv += "\r\nPoids : " + rolistes[NomDonne].Inv[key].Weight.toString() + "kg"
 
-					if (typeof rolistes[NomDonne].Inv[key].Description !== "undefined") {
-						EmbInv += "\r\nDescription : " + rolistes[NomDonne].Inv[key].Description
+						if (typeof rolistes[NomDonne].Inv[key].Description !== "undefined") {
+							EmbInv += "\r\nDescription : " + rolistes[NomDonne].Inv[key].Description
+						}
+						EmbInv += "\r\n";
 					}
-					EmbInv += "\r\n";
+				} else {
+					EmbInv = "Rien";
 				}
 
 				//Ajout des Objets dans l'Embed

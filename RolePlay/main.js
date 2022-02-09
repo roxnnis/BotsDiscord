@@ -31,8 +31,6 @@ Roxnnis = new Classes.Personnage({
 
 Dexhort = new Classes.Personnage({
 	Nom: "MJ",
-	Weapons: { Principale: Poulet, Auxiliaire: new Classes.Armes() },
-	Stats: new Classes.Stats({ phy: 69, men: 69, int: 69, soc: 69, cha: 69 }),
 	LVL: 96
 });
 
@@ -121,6 +119,7 @@ bot.login(SettBot.Token);
 
 //#region Commandes du Bot
 bot.on("interactionCreate", async (interaction) => {
+
 	if (!interaction.isCommand() || !salonJDR.includes(interaction.channelId))
 		return interaction.reply(
 			{

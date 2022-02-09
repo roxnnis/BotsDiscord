@@ -1,11 +1,10 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
 
 //Personnages
 const fs = require("fs");
 var Pers = fs.readFileSync("./Personnages.json");
-const Classes = require("../classes.js");
 const PInf = require("./fonctions/personnageInfo.js");
+const PAdd = require("./fonctions/personnageAdd.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -46,10 +45,10 @@ module.exports = {
 		.addStringOption((option) =>option.setName("nom").setDescription("Cible de la modification").setRequired(true)
 		),
 	async execute(interaction) {
-		
-		var rolistes = JSON.parse(Pers); //Base JSON
 
 		if (interaction.commandName == "personnage") {
+			var Pers = fs.readFileSync("Personnages.json");
+			var rolistes = JSON.parse(Pers);
 
 			//INFORMATIONS DU PERSONNAGE
 			if (interaction.options._subcommand == "info") {
@@ -58,25 +57,11 @@ module.exports = {
 			
 			//AJOUTER UN PERSONNAGE
 			} else if (interaction.options._subcommand == "add") {
-				tempo = new Classes.Personnage({
-					Nom: interaction.options.getString("nom"),
-					Stats: new Classes.Stats({ phy: interaction.options.getInteger("phy"), men: interaction.options.getInteger("men"), int: interaction.options.getInteger("int"), soc: interaction.options.getInteger("soc"), cha: interaction.options.getInteger("cha") }),
-				});
-				
-				rolistes[tempo.Nom] = {
-					Nom: tempo.Nom,
-					LVL: tempo.LVL,
-					Money: tempo.Money,
-					Weight: tempo.Weight.Total,
-					PV: tempo.PV,
-					Stats: tempo.Stats,
-					Weapons: tempo.Weapons,
-					Armors: tempo.Armors,
-					Inv: tempo.Inv
-				};
+				PAdd.PersoAdd(rolistes,interaction);
+				await interaction.reply("Votre personnage vient d'être créé.");
 			}
 		} else if (interaction.commandName == "stats") {
-			await interaction.reply("Votre personnage vient d'être créé.");
+			await interaction.reply("La statistique vient d'être modifiée.");
 		}
 		else {
 			await interaction.reply({

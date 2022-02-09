@@ -98,7 +98,9 @@ const Shop = {
 		}),
 	},
 	DCM: {},
-	Consommables: {},
+	Consommables: {
+		"Corde": new Classes.Objet({ Nom: "Corde", Remain: 15, Unity: "m", Weight: 15 })
+	},
 };
 
 exports.Shop = Shop;

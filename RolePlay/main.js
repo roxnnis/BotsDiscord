@@ -16,6 +16,7 @@ const salonJDR = ["624474305018855449"]
 Poulet = Shop.Shop.Armes["Revolver composite"];
 KFC = Shop.Shop.Armes["Epée longue"];
 Tenders = Shop.Shop.Armures["Toison de sniper"];
+ConsoRandom = Shop.Shop.Consommables["Corde"];
 
 //Persos
 Roxnnis = new Classes.Personnage({
@@ -25,9 +26,8 @@ Roxnnis = new Classes.Personnage({
 	Stats: new Classes.Stats({ phy: 5, men: 13, int: 14, soc: 4, cha: 5 }),
 	Weapons: { Principale: Poulet, Auxiliaire: new Classes.Armes() },
 	Armors: { Principale: Tenders },
-	INV: new Classes.Inventaire({Items: {Courge: new Classes.Objet({ Nom: "Corde", Remain: 15, Unity: "m", Weight: 15 }),Courge2: new Classes.Objet({ Nom: "Cordes", Remain: 10, Unity: "m", Weight: 4 })}})
+	INV: {obj1: ConsoRandom, obj2: ConsoRandom}
 });
-
 
 Dexhort = new Classes.Personnage({
 	Nom: "MJ",
@@ -44,7 +44,7 @@ Côtelette = new Classes.Personnage({
 	Weapons: { Principale: new Classes.Armes(), Auxiliaire: new Classes.Armes() },
 	Armors: { Principale: new Classes.Armures() },
 });
-
+//console.log("47MA - ", Roxnnis);
 //JSON lecture
 const Pers = fs.readFileSync("./Personnages.json");
 var rolistes = JSON.parse(Pers);
@@ -58,8 +58,9 @@ rolistes["Roxnnis"] = {
 	Stats: Roxnnis.Stats,
 	Weapons: Roxnnis.Weapons,
 	Armors: Roxnnis.Armors,
-	INV: Roxnnis.Inv
+	Inv: Roxnnis.Inv
 };
+
 
 rolistes["Dexhort"] = {
 	Nom: Dexhort.Nom,
@@ -70,7 +71,7 @@ rolistes["Dexhort"] = {
 	Stats: Dexhort.Stats,
 	Weapons: Dexhort.Weapons,
 	Armors: Dexhort.Armors,
-	INV: Dexhort.Inv
+	Inv: Dexhort.Inv
 };
 
 rolistes["Côtelette"] = {
@@ -82,7 +83,7 @@ rolistes["Côtelette"] = {
 	Stats: Côtelette.Stats,
 	Weapons: Côtelette.Weapons,
 	Armors: Côtelette.Armors,
-	INV: Dexhort.Inv
+	Inv: Dexhort.Inv
 };
 
 //Écriture dans JSON

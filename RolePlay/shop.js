@@ -3,7 +3,7 @@ const fs = require("fs");
 
 
 //SHOP
-/*var Shop = {
+var Shop = {
 	Armes: {
 		"Epée longue": new Classes.Armes({
 			Nom: "Epée Longue",
@@ -103,7 +103,7 @@ const fs = require("fs");
 	Consommables: {
 		"Corde": new Classes.Objet({ Nom: "Corde", Remain: 15, Unity: "m", Weight: 15 })
 	},
-};*/
+};
 
 var tempo = new Classes.Shop();
 

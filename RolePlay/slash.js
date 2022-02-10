@@ -15,7 +15,23 @@ for (const file of commandFiles) {
 	commands.push(command.data.toJSON());
 	commands.push(command.data2.toJSON());
 }
+/* 
+	Vers 12h10 je devrai couper la liaison (retour chez moi)
+	à moins que je trouve comment garder mon pc allumé même fermé :D
 
+	ok tkt, de toute manière je peux pas faire de test parce que t'as les perms qui font du caca
+	en vrai je coupe, tu me ping quand t'as relancé et que tu peux bosser un minimum dessus
+
+	Bah je prends mon train vers 17hXX donc je risque de couper un peu avant, mais dès que je suis rentré c'est good :D
+
+	Bon bah on fait comme ça, moi je me remets sur mon taf de cours et tu me dis quand on peut bosser
+
+	Faut manger monsieur hein xD
+
+	non. Aller hop j'y vais, a toute à l'heure
+
+	Aled... xD
+*/
 const rest = new REST({ version: '9' }).setToken(Token);
 
 (async () => {

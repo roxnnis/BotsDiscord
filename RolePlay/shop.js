@@ -1,7 +1,8 @@
 const Classes = require("./classes.js")
+const fs = require("fs");
 
 //SHOP
-const Shop = {
+var Shop = {
 	Armes: {
 		"Epée longue": new Classes.Armes({
 			Nom: "Epée Longue",
@@ -102,5 +103,11 @@ const Shop = {
 		"Corde": new Classes.Objet({ Nom: "Corde", Remain: 15, Unity: "m", Weight: 15 })
 	},
 };
+
+var tempoShop = {};
+
+tempoShop["Armes"] = Shop.Armes;
+
+fs.writeFileSync("Shop.json", JSON.stringify(tempoShop));
 
 exports.Shop = Shop;

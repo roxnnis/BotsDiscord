@@ -26,7 +26,8 @@ function PersoAdd(rolistes, interaction){
 		Stats: tempo.Stats,
 		Weapons: tempo.Weapons,
 		Armors: tempo.Armors,
-		Inv: tempo.Inv
+		Inv: tempo.Inv,
+		Dcm: tempo.Dcm
 	};
 
 	fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));

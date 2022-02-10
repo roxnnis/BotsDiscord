@@ -9,7 +9,7 @@ const Classes = require("./classes.js");
 const Shop = require("./shop.js");
 
 //SALON JDR
-const salonJDR = ["624474305018855449"]
+const salonJDR = ["624474305018855449","924276882898321449"];
 
 //#region Création de personnages
 //Variables d'armes (pour aller plus vite)
@@ -19,70 +19,11 @@ Tenders = Shop.Shop.Armures["Toison de sniper"];
 ConsoRandom = Shop.Shop.Consommables["Corde"];
 
 //Persos
-Roxnnis = new Classes.Personnage({
-	Nom: "Roxnnis",
-	LVL: 2,
-	Money: 3827,
-	Stats: new Classes.Stats({ phy: 5, men: 13, int: 14, soc: 4, cha: 5 }),
-	Weapons: { Principale: Poulet, Auxiliaire: new Classes.Armes() },
-	Armors: { Principale: Tenders },
-	INV: {obj1: ConsoRandom, obj2: ConsoRandom}
-});
-
-Dexhort = new Classes.Personnage({
-	Nom: "MJ",
-	LVL: 96
-});
-
-Côtelette = new Classes.Personnage({
-	Nom: "BeafSteak",
-	LVL: 2,
-	Money: 0,
-	Stats: new Classes.Stats({ men: 13, int: 10, cha: 12 }),
-	Weapons: { Principale: new Classes.Armes(), Auxiliaire: new Classes.Armes() },
-	Armors: { Principale: new Classes.Armures() },
-});
+Dexhort = new Classes.Personnage({Nom: "MJ",LVL: 96});
 //console.log("47MA - ", Roxnnis);
 //JSON lecture
 const Pers = fs.readFileSync("./Personnages.json");
 var rolistes = JSON.parse(Pers);
-
-rolistes["Roxnnis"] = {
-	Nom: Roxnnis.Nom,
-	LVL: Roxnnis.LVL,
-	Money: Roxnnis.Money,
-	Weight: Roxnnis.Weight.Total,
-	PV: Roxnnis.PV,
-	Stats: Roxnnis.Stats,
-	Weapons: Roxnnis.Weapons,
-	Armors: Roxnnis.Armors,
-	Inv: Roxnnis.Inv
-};
-
-
-rolistes["Dexhort"] = {
-	Nom: Dexhort.Nom,
-	LVL: Dexhort.LVL,
-	Money: Dexhort.Money,
-	Weight: Dexhort.Weight.Total,
-	PV: Dexhort.PV,
-	Stats: Dexhort.Stats,
-	Weapons: Dexhort.Weapons,
-	Armors: Dexhort.Armors,
-	Inv: Dexhort.Inv
-};
-
-rolistes["Côtelette"] = {
-	Nom: Côtelette.Nom,
-	LVL: Côtelette.LVL,
-	Money: Côtelette.Money,
-	Weight: Côtelette.Weight.Total,
-	PV: Côtelette.PV,
-	Stats: Côtelette.Stats,
-	Weapons: Côtelette.Weapons,
-	Armors: Côtelette.Armors,
-	Inv: Dexhort.Inv
-};
 
 //Écriture dans JSON
 fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
@@ -101,6 +42,9 @@ const bot = new Client({
 	],
 });
 
+//Autorisation
+const permissions = [{id: '185352234580574208',type: 'USER',permission: true,},{id: '659767673898663948',type: 'ROLE',permission: false}];
+
 //Intégrer les commandes
 bot.commands = new Collection();
 const commandFiles = fs
@@ -111,6 +55,7 @@ for (const file of commandFiles) {
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	bot.commands.set(command.data.name, command);
+	bot.commands.permissions.set({permissions});
 }
 
 //Connexion du Bot
@@ -136,11 +81,18 @@ bot.on("interactionCreate", async (interaction) => {
 	try {
 		await command.execute(interaction);
 	} catch (error) {
-		console.error(error);
-		await interaction.reply({
-			content: "There was an error while executing this command!",
-			ephemeral: true,
-		});
+		if (interaction.options._subcommand == "info") {
+			await interaction.reply({
+				content: "Erreur : Le nom "+ interaction.options._hoistedOptions[0].value + " n'est pas reconnu.",
+				ephemeral: false
+			})
+		}
+		else if (interaction.options._subcommand == "add") {
+			await interaction.reply({
+				content: "Erreur : Ajout.",
+				ephemeral: false
+			})
+		}
 	}
 });
 //#endregion

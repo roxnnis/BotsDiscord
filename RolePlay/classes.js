@@ -205,7 +205,7 @@ class Armures {
 			Effects = this.#EFFECTS,
 		} = {}
 		//#endregion
-	//#region Variables appliquées au constructeur
+		//#region Variables appliquées au constructeur
 	) {
 		//Nom
 		this.#NOM = Nom;
@@ -253,6 +253,7 @@ class Objet {
 	//#region Caractéristiques privées de base
 	#NOM = "Rien";
 	#QUANTITY = 1;
+	#STACKABLE = false;
 	#REMAIN = 0;
 	#UNITY = "None";
 	#QUALITY = "None";
@@ -264,6 +265,7 @@ class Objet {
 		{
 			Nom = this.#NOM,
 			Quantity = this.#QUANTITY,
+			Stackable = this.#STACKABLE,
 			Remain = this.#REMAIN,
 			Unity = this.#UNITY,
 			Quality = this.#QUALITY,
@@ -271,17 +273,22 @@ class Objet {
 			Description = this.#DESCRIPTION
 		} = {}
 		//#endregion
-	//#region Variables appliquées au constructeur
+		//#region Variables appliquées au constructeur
 	) {
 		//Nom
 		this.#NOM = Nom;
 		//Quantité
 		this.#QUANTITY = Quantity;
+
+		//Stackable
+		this.#STACKABLE = Stackable;
+
 		//Utilisations restantes
 		if (Remain != 0) {
 			this.#REMAIN = Remain;
 			this.#UNITY = Unity;
 		}
+
 		//Qualité
 		if (Quality != "None") {
 			this.#QUALITY = Quality;
@@ -339,6 +346,10 @@ class Objet {
 		}
 	}
 
+	//Obtenir stackable
+	get Stackable(){
+		return this.#STACKABLE;
+	}
 	//Obtenir le Poids
 	get Weight() {
 		return this.#WEIGHT;
@@ -414,7 +425,7 @@ class Objet {
 			else {
 				this.#REMAIN = qtt;
 				if (this.#REMAIN == 0) {
-					this.#QUANTITY -= 1;
+					this.Quantity -= 1;
 				}
 			}
 		}
@@ -457,25 +468,25 @@ class Objet {
 		}
 	}
 	//Obtenir les infos
-	getInfo(){
+	getInfo() {
 		var info = {
 			Nom: this.#NOM,
 			Quantity: this.Quantity,
 			Weight: this.Weight
 		}
-		if(this.#REMAIN){
+		if (this.#REMAIN) {
 			info["Remain"] = this.#REMAIN;
 			info["Unity"] = this.#UNITY;
 		}
-		if(this.#QUALITY != "None"){ 
+		if (this.#QUALITY != "None") {
 			info["Quality"] = this.#QUALITY;
 		}
-		if(this.#DESCRIPTION != "Aucune") {
+		if (this.#DESCRIPTION != "Aucune") {
 			info["Description"] = this.#DESCRIPTION;
 		}
 		return info;
 	}
-	
+
 	//#endregion
 }
 
@@ -490,8 +501,8 @@ class Personnage {
 	#MONEY = 1000;
 
 	#STATS = new Stats();
-	#WEAPONS = {Principale : new Armes()}
-	#ARMORS = {Principale : new Armures()}
+	#WEAPONS = { Principale: new Armes() }
+	#ARMORS = { Principale: new Armures() }
 	#INV = {};
 	#DCM = "Aucun";
 
@@ -509,7 +520,7 @@ class Personnage {
 			INV = this.#INV,
 		} = {}
 		//#endregion 
-	//#region Variables appliquées au constructeur
+		//#region Variables appliquées au constructeur
 	) {
 		//Nom
 		this.#NOM = Nom;
@@ -536,7 +547,7 @@ class Personnage {
 		else this.#PV = { Actuel: 1, Total: 1 };
 
 		//Récupérer les armes
-		
+
 		for (var key in Weapons) {
 			this.#WEAPONS[key] = {
 				Nom: Weapons[key].Nom,
@@ -546,7 +557,7 @@ class Personnage {
 				Damage: Weapons[key].Damage,
 				Precision: Weapons[key].Precision,
 			};
-				this.#WEAPONS[key]["Effects"] = Weapons[key].Effects;
+			this.#WEAPONS[key]["Effects"] = Weapons[key].Effects;
 			if (typeof Weapons[key].Munitions !== "undefined") {
 				this.#WEAPONS[key]["Munitions"] = Weapons[key].Munitions;
 			}
@@ -752,6 +763,182 @@ class Personnage {
 		}
 		return objectInv;
 	}
+	set Inv(objet){
+		var key = objet.Nom;
+		if(objet.Stackable == false && typeof this.#INV[key] !== "undefined")
+		{
+			var i = 0;
+			while(i = 0 || typeof this.#INV[key + i] === "undefined"){i++;}
+			this.#INV[key + i] = new Objet({
+				Nom:objet.Nom,
+				Quantity:objet.Quantity,
+				Stackable:objet.Stackable,
+				Remain:objet.Remain,
+				Unity:objet.Unity,
+				Quality:objet.Quality,
+				Weight:objet.Weight,
+				Description:objet.Description
+			});
+		} else if (objet.Stackable == false && typeof this.#INV[key] === "undefined"){
+			this.#INV[key] = new Objet({
+				Nom:objet.Nom,
+				Quantity:objet.Quantity,
+				Stackable:objet.Stackable,
+				Remain:objet.Remain,
+				Unity:objet.Unity,
+				Quality:objet.Quality,
+				Weight:objet.Weight,
+				Description:objet.Description
+			});
+		} else if (objet.Stackable == true && typeof this.#INV[key] !== "undefined"){
+			this.#INV[key] += objet.Quantity;
+		} else{
+			this.#INV[key] += new Objet({
+				Nom:objet.Nom,
+				Quantity:objet.Quantity,
+				Stackable:objet.Stackable,
+				Remain:objet.Remain,
+				Unity:objet.Unity,
+				Quality:objet.Quality,
+				Weight:objet.Weight,
+				Description:objet.Description
+			});
+		}
+	} 
+	//DCM
+	get Dcm() {
+		return this.#DCM;
+	}
+	set Dcm(newDCM) {
+		try {
+			if (typeof newDCM != "string") throw "Bad type";
+			else this.#MONEY = newDCM;
+		} catch (err) {
+			if (err == "Bad type") {
+				console.log("Erreur : Mauvais type de variable d'entrée indiqué.");
+				console.log("Demandé : string || Donné :", typeof newDCM);
+			}
+		}
+	}
+	//#endregion
+}
+
+class Shop {
+	//#region Caractéristiques privées de base
+	#ARMES = {};
+	#ARMURES = {};
+	#DCM = {};
+	#CONSOMMABLES = {};
+	//#endregion
+	//#region Constructeur
+	constructor(
+		{
+			Armes = this.#ARMES,
+			Armures = this.#ARMURES,
+			Dcm = this.#DCM,
+			Consommable = this.#CONSOMMABLES
+		} = {}
+		//#endregion 
+		//#region Variables appliquées au constructeur
+	) {
+		this.#ARMES = Armes;
+		this.#ARMURES = Armures;
+		this.#DCM = Dcm;
+		this.#CONSOMMABLES = Consommable;
+	}
+	//#endregion
+	//#region Fonctions utilisables sur la boutique
+	// Armes ___
+	get ShopArmes() {
+		var dicoArmes = {};
+		for (var key in this.#ARMES) {
+			dicoArmes[key] = this.#ARMES[key];
+		}
+		return dicoArmes;
+	}
+	// Shop add Item options
+	set ShopArmes(arme) {
+		this.#ARMES[arme.Nom] = {
+			Objet: new Armes({
+				Nom: arme.Nom,
+				Type: arme.Type,
+				Hand: arme.Hand,
+				Weight: arme.Weight,
+				Damage: arme.Damage,
+				Precision: arme.Precision,
+				Effects: arme.Effects
+			}), Prix: arme.Prix
+		};
+	}
+	// Armures ___
+	get ShopArmures() {
+		var dicoArmures = {};
+		for (var key in this.#ARMURES) {
+			dicoArmures[key] = this.#ARMURES[key];
+		}
+		return dicoArmures;
+	}
+	set ShopArmures(armure) {
+		this.#ARMURES[armure.Nom] = {
+			Objet: new Armures({
+				Nom: armure.Nom,
+				Type: armure.Type,
+				Weight: armure.Weight,
+				Res: armure.Res,
+				Effects: armure.Effects
+			}), Prix: armure.Prix
+		};
+	}
+	// Consommable __
+	get ShopObjet() {
+		var dicoObjets = {};
+		for (var key in this.#CONSOMMABLES) {
+			dicoObjets[key] = this.#CONSOMMABLES[key];
+		}
+		return dicoObjets;
+	}
+	set ShopObjet(objet) {
+		this.#CONSOMMABLES[objet.Nom] = {
+			Objet: new Objet({
+				Nom: objet.Nom,
+				Quantity: objet.Quantity,
+				Remain: objet.Remain,
+				Unity: objet.Unity,
+				Quality: objet.Quality,
+				Weight: objet.Weight,
+				Description: objet.Description
+			}), Prix: objet.Prix
+		};
+	}
+	// Fonction Achat
+	// Shop buy Item NomJoueur NomItem Quantity
+	/* 
+		Penser à ajouter un moyen d'afficher le shop :eyes:
+		Penser à ajouter un moyen d'afficher le shop :eyes:
+		Penser à ajouter un moyen d'afficher le shop :eyes:
+	*/
+	BuyItem(rolistes, joueurNom, nomObjet, qtt=1) {
+		try {
+			if (typeof this.#CONSOMMABLES[nomObjet] === "undefined") throw "No Item";
+			else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+			else {
+				if (rolistes[joueurNom].Money >= (this.#CONSOMMABLES[nomObjet].Prix * qtt)){
+					for(i=0;i<qtt;i++){rolistes[joueurNom].Inv = this.#CONSOMMABLES[nomObjet];}
+					return joueurNom + " à acheter " + qtt + " " + nomObjet;
+				}
+				else{
+					return "Le joueur " + joueurNom + " n'a pas assez d'argent pour acheter " + nomObjet;
+				}
+			}
+		} catch(err){
+			if(err == "No Item"){
+				return "Il n'y a pas d'item de ce nom dans le shop";
+			}
+			else if(err == "No player"){
+				return "Il n'y a pas de joueur de ce nom";
+			}
+		}
+	}
 	//#endregion
 }
 
@@ -760,3 +947,4 @@ exports.Armes = Armes;
 exports.Armures = Armures;
 exports.Objet = Objet;
 exports.Personnage = Personnage;
+exports.Shop = Shop;

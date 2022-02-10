@@ -5,6 +5,7 @@ const { MessageEmbed } = require("discord.js");
 const fs = require("fs");
 var Pers = fs.readFileSync("./Personnages.json");
 const Classes = require("../classes.js");
+const Spl = require("./fonctions/shopList.js");
 
 
 module.exports = {
@@ -38,9 +39,63 @@ module.exports = {
 						.setName("list")
 						.setDescription("Afficher le contenu de la boutique de consomable")
 						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet. *all* pour tout afficher").setRequired(true))
+				)
+		)
+		.addSubcommandGroup(subcommandgroup =>
+			subcommandgroup
+				.setName("arme")
+				.setDescription("Ouvre le shop d'armes")
+				// shop >> item
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("add")
+						.setDescription("Ajoute une arme")
+						// shop >> item >> add >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme").setRequired(true))
+						.addStringOption((option) => option.setName("type").setDescription("Type de l'arme").setRequired(true))
+						.addIntegerOption((option) => option.setName("main").setDescription("Nombre de main utilisé").setRequired(true))
+						.addIntegerOption((option) => option.setName("pods").setDescription("Poid de l'arme").setRequired(true))
+						.addIntegerOption((option) => option.setName("dega").setDescription("Dégat de l'arme").setRequired(true))
+						.addIntegerOption((option) => option.setName("prec").setDescription("Précision de l'arme").setRequired(true))
+						.addIntegerOption((option) => option.setName("prix").setDescription("Prix de l'arme").setRequired(true))
+						.addIntegerOption((option) => option.setName("munn").setDescription("Munition de l'arme").setRequired(false))
+						.addStringOption((option) => option.setName("efct").setDescription("Effet de l'arme").setRequired(false))
+				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("list")
+						.setDescription("Afficher le contenu de la forge d'arme")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme. *all* pour tout afficher").setRequired(true))
+				)
+		)
+		.addSubcommandGroup(subcommandgroup =>
+			subcommandgroup
+				.setName("armure")
+				.setDescription("Ouvre le shop d'armure")
+				// shop >> item
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("add")
+						.setDescription("Ajoute une armure")
+						// shop >> item >> add >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'armure").setRequired(true))
+						.addStringOption((option) => option.setName("type").setDescription("Type de l'armure").setRequired(true))
+						.addIntegerOption((option) => option.setName("pods").setDescription("Poid de l'armure").setRequired(true))
+						.addIntegerOption((option) => option.setName("prix").setDescription("Prix de l'armure").setRequired(true))
+						.addIntegerOption((option) => option.setName("rphy").setDescription("Resistance physique de l'armure").setRequired(true))
+						.addIntegerOption((option) => option.setName("rmen").setDescription("Resistance mental de l'armure").setRequired(true))
+						.addStringOption((option) => option.setName("efct").setDescription("Effet de l'armure").setRequired(false))
+				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("list")
+						.setDescription("Afficher le contenu de l'armurerie")
+						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet / All pour tout afficher").setRequired(true))
 				)
-		)//ok c'est bon merci
+		)
 		//#endregion
 	,
 	async execute(interaction) {
@@ -89,27 +144,10 @@ module.exports = {
 				else if(interaction.options._subcommand == "list"){
 					if(interaction.options.getString("nom").toLowerCase() == "all")
 					{
-						embed = new MessageEmbed()
-						.setColor("AQUA")
-						.setTitle("Boutique de consommable")
-						.addField("\u200b", "\u200b");
-						
-						EmbObjet = "";
-						if(Object.keys(boutique.shop["ShopObjet"]).length != 0)
-						{
-							for(var key in boutique.shop["ShopObjet"])
-							{
-								EmbObjet +=
-									boutique.shop["ShopObjet"][key].Objet.Nom +
-									"   Prix: " +
-									boutique.shop["ShopObjet"][key].Prix +
-									"\r\n"
-							}
-						} else {
-							EmbObjet = "Rien en boutique aujourd'hui";
-						}
-						embed.addField("Consommable",EmbObjet);
-						await interaction.reply({embeds: [embed]});
+						await interaction.reply({embeds: [Spl.ShopListObjet(boutique,"all")]});
+					}
+					else{
+						await interaction.reply({embeds: [Spl.ShopListObjet(boutique,interaction.options.getString("nom"))]});
 					}
 				}
 			}

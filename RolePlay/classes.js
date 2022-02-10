@@ -900,7 +900,9 @@ class Shop {
 	}
 	// objet = {Objet,Prix} obligatoire
 	set ShopObjet(objet) {
-		this.#CONSOMMABLES[objet.Objet.Nom] = {
+		var tempo = objet.Objet.Nom;
+		console.log(tempo);
+		this.#CONSOMMABLES[tempo] = { tempo: {
 			Objet: new Objet({
 				Nom: objet.Objet.Nom,
 				Quantity: objet.Objet.Quantity,
@@ -910,7 +912,7 @@ class Shop {
 				Weight: objet.Objet.Weight,
 				Description: objet.Objet.Description
 			}), Prix: objet.Prix
-		};
+		}};
 	}
 	// Fonction Achat Consommable
 	// Shop buy Item NomJoueur NomItem Quantity

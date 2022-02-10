@@ -1,1 +1,1 @@
-{"ShopArmes":{},"ShopArmures":{},"ShopObjet":{"Objet":{"Nom":"patate","Weight":1,"Quantity":1,"Stackable":false},"Prix":5}}
+{"shop":{"ShopObjet":{"Patate":{"Objet":{"Nom":"Patate","Weight":1,"Quantity":1,"Stackable":false},"Prix":5}},"ShopArmes":{},"ShopArmures":{}}}

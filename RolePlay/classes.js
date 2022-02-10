@@ -89,6 +89,7 @@ class Armes {
 		this.#PRECISION = Precision;
 		//Nombre de Munitions de l'arme
 		if (["Arc", "Fusil", "Pistolet"].includes(this.#TYPE)) {
+			console.log("je suis appelé");
 			switch (this.#TYPE) {
 				case "Arc":
 					this.#MUNITIONS = { Chargeur: 1, Reserve: 30, Recharge: 1 };
@@ -861,13 +862,13 @@ class Shop {
 	set ShopArmes(arme) {
 		this.#ARMES[arme.Nom] = {
 			Objet: new Armes({
-				Nom: arme.Nom,
-				Type: arme.Type,
-				Hand: arme.Hand,
-				Weight: arme.Weight,
-				Damage: arme.Damage,
-				Precision: arme.Precision,
-				Effects: arme.Effects
+				Nom: arme.Objet.Nom,
+				Type: arme.Objet.Type,
+				Hand: arme.Objet.Hand,
+				Weight: arme.Objet.Weight,
+				Damage: arme.Objet.Damage,
+				Munitions: arme.Objet.Munitions,
+				Precision: arme.Objet.Precision
 			}), Prix: arme.Prix
 		};
 	}
@@ -880,15 +881,16 @@ class Shop {
 		return dicoArmures;
 	}
 	set ShopArmures(armure) {
-		this.#ARMURES[armure.Nom] = {
+		var tempo = armure.Objet.Nom;
+		this.#ARMURES[tempo] = { tempo : {
 			Objet: new Armures({
-				Nom: armure.Nom,
-				Type: armure.Type,
-				Weight: armure.Weight,
-				Res: armure.Res,
-				Effects: armure.Effects
+				Nom: armure.Objet.Nom,
+				Type: armure.Objet.Type,
+				Weight: armure.Objet.Weight,
+				Res: armure.Objet.Res,
+				Effects: armure.Objet.Effects
 			}), Prix: armure.Prix
-		};
+		}};
 	}
 	// Consommable __
 	get ShopObjet() {
@@ -901,7 +903,6 @@ class Shop {
 	// objet = {Objet,Prix} obligatoire
 	set ShopObjet(objet) {
 		var tempo = objet.Objet.Nom;
-		console.log(tempo);
 		this.#CONSOMMABLES[tempo] = { tempo: {
 			Objet: new Objet({
 				Nom: objet.Objet.Nom,

@@ -59,8 +59,6 @@ module.exports = {
 						.addIntegerOption((option) => option.setName("dega").setDescription("Dégat de l'arme").setRequired(true))
 						.addIntegerOption((option) => option.setName("prec").setDescription("Précision de l'arme").setRequired(true))
 						.addIntegerOption((option) => option.setName("prix").setDescription("Prix de l'arme").setRequired(true))
-						.addIntegerOption((option) => option.setName("munn").setDescription("Munition de l'arme").setRequired(false))
-						.addStringOption((option) => option.setName("efct").setDescription("Effet de l'arme").setRequired(false))
 				)
 				.addSubcommand(subcommand =>
 					subcommand
@@ -86,7 +84,6 @@ module.exports = {
 						.addIntegerOption((option) => option.setName("prix").setDescription("Prix de l'armure").setRequired(true))
 						.addIntegerOption((option) => option.setName("rphy").setDescription("Resistance physique de l'armure").setRequired(true))
 						.addIntegerOption((option) => option.setName("rmen").setDescription("Resistance mental de l'armure").setRequired(true))
-						.addStringOption((option) => option.setName("efct").setDescription("Effet de l'armure").setRequired(false))
 				)
 				.addSubcommand(subcommand =>
 					subcommand
@@ -148,6 +145,88 @@ module.exports = {
 					}
 					else{
 						await interaction.reply({embeds: [Spl.ShopListObjet(boutique,interaction.options.getString("nom"))]});
+					}
+				}
+			}
+			else if (interaction.options._group == "arme") {
+				//Shop >> Item >> Add >> options
+				if(interaction.options._subcommand == "add")
+				{
+					var tempo = {
+						Objet: {
+							Nom: interaction.options.getString("nom"),
+							Type: interaction.options.getString("type"),
+							Hand: interaction.options.getInteger("main"),
+							Weight: interaction.options.getInteger("pods"),
+							Damage: interaction.options.getInteger("dega"),
+							Precision: interaction.options.getInteger("prec"),
+						},
+						Prix: interaction.options.getInteger("prix")
+					};
+					if (["Arc", "Fusil", "Pistolet"].includes(tempo.Objet.Type)) {
+						switch (tempo.Objet.Type) {
+							case "Arc":
+								tempo.Objet.Munitions = { Chargeur: 1, Reserve: 30, Recharge: 1 };
+								break; //Arcs, ...
+							case "Fusil":
+								tempo.Objet.Munitions = { Chargeur: 1, Reserve: 20, Recharge: 1 };
+								break; //Fusils, ...
+							case "Pistolet":
+								tempo.Objet.Munitions = { Chargeur: 6, Reserve: 30, Recharge: 1 };
+								break; //Revolvers, Pistolets, ...
+							default:
+								tempo.Objet.Munitions = { Chargeur: 0, Reserve: 0, Recharge: 1 };
+								break;
+						}
+					}
+
+					boutique.shop["ShopArmes"][tempo.Objet.Nom] = {
+						Objet: tempo.Objet,
+						Prix: tempo.Prix
+					}
+					
+					fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+					await interaction.reply("Arme créé");
+				}
+				else if(interaction.options._subcommand == "list"){
+					if(interaction.options.getString("nom").toLowerCase() == "all")
+					{
+						await interaction.reply({embeds: [Spl.ShopListArme(boutique,"all")]});
+					}
+					else{
+						await interaction.reply({embeds: [Spl.ShopListArme(boutique,interaction.options.getString("nom"))]});
+					}
+				}
+			}
+			else if (interaction.options._group == "armure") {
+				//Shop >> Item >> Add >> options
+				if(interaction.options._subcommand == "add")
+				{
+					var tempo = {
+						Objet: {
+							Nom: interaction.options.getString("nom"),
+							Type: interaction.options.getString("type"),
+							Weight: interaction.options.getInteger("pods"),
+							Res: { PHY: interaction.options.getInteger("rphy"), MEN: interaction.options.getInteger("rmen")},
+						},
+						Prix: interaction.options.getInteger("prix")
+					};
+
+					boutique.shop["ShopArmures"][tempo.Objet.Nom] = {
+						Objet: tempo.Objet,
+						Prix: tempo.Prix
+					}
+					
+					fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+					await interaction.reply("Armure créé");
+				}
+				else if(interaction.options._subcommand == "list"){
+					if(interaction.options.getString("nom").toLowerCase() == "all")
+					{
+						await interaction.reply({embeds: [Spl.ShopListArmure(boutique,"all")]});
+					}
+					else{
+						await interaction.reply({embeds: [Spl.ShopListArmure(boutique,interaction.options.getString("nom"))]});
 					}
 				}
 			}

@@ -12,15 +12,11 @@ const Shop = require("./shop.js");
 const salonJDR = ["624474305018855449","924276882898321449"];
 
 //#region Création de personnages
-//Variables d'armes (pour aller plus vite)
-Poulet = Shop.Shop.Armes["Revolver composite"];
-KFC = Shop.Shop.Armes["Epée longue"];
-Tenders = Shop.Shop.Armures["Toison de sniper"];
-ConsoRandom = Shop.Shop.Consommables["Corde"];
+
 
 //Persos
 Dexhort = new Classes.Personnage({Nom: "MJ",LVL: 96});
-//console.log("47MA - ", Roxnnis);
+
 //JSON lecture
 const Pers = fs.readFileSync("./Personnages.json");
 var rolistes = JSON.parse(Pers);
@@ -42,8 +38,8 @@ const bot = new Client({
 	],
 });
 
-//Autorisation
-const permissions = [{id: '185352234580574208',type: 'USER',permission: true,},{id: '659767673898663948',type: 'ROLE',permission: false}];
+//Autorisation (Pourri AF)
+// const permissions = [{id: '185352234580574208',type: 'USER',permission: true,},{id: '659767673898663948',type: 'ROLE',permission: false}];
 
 //Intégrer les commandes
 bot.commands = new Collection();
@@ -55,12 +51,18 @@ for (const file of commandFiles) {
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	bot.commands.set(command.data.name, command);
-	bot.commands.permissions.set({permissions});
 }
 
 //Connexion du Bot
 bot.login(SettBot.Token);
 //#endregion
+
+//Update des slash commands
+const COMMANDES_BOT = require("./slash.js");
+bot.on('ready', () => {
+	console.log("Je suis opérationnel ! (Assist-o-bot, pas Roxnnis hein...)");
+	COMMANDES_BOT.slash();
+})
 
 //#region Commandes du Bot
 bot.on("interactionCreate", async (interaction) => {
@@ -88,6 +90,7 @@ bot.on("interactionCreate", async (interaction) => {
 			})
 		}
 		else if (interaction.options._subcommand == "add") {
+			console.log(error);
 			await interaction.reply({
 				content: "Erreur : Ajout.",
 				ephemeral: false

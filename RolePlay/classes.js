@@ -277,6 +277,7 @@ class Objet {
 	) {
 		//Nom
 		this.#NOM = Nom;
+
 		//Quantité
 		this.#QUANTITY = Quantity;
 
@@ -897,20 +898,21 @@ class Shop {
 		}
 		return dicoObjets;
 	}
+	// objet = {Objet,Prix} obligatoire
 	set ShopObjet(objet) {
-		this.#CONSOMMABLES[objet.Nom] = {
+		this.#CONSOMMABLES[objet.Objet.Nom] = {
 			Objet: new Objet({
-				Nom: objet.Nom,
-				Quantity: objet.Quantity,
-				Remain: objet.Remain,
-				Unity: objet.Unity,
-				Quality: objet.Quality,
-				Weight: objet.Weight,
-				Description: objet.Description
+				Nom: objet.Objet.Nom,
+				Quantity: objet.Objet.Quantity,
+				Remain: objet.Objet.Remain,
+				Unity: objet.Objet.Unity,
+				Quality: objet.Objet.Quality,
+				Weight: objet.Objet.Weight,
+				Description: objet.Objet.Description
 			}), Prix: objet.Prix
 		};
 	}
-	// Fonction Achat
+	// Fonction Achat Consommable
 	// Shop buy Item NomJoueur NomItem Quantity
 	/* 
 		Penser à ajouter un moyen d'afficher le shop :eyes:
@@ -939,6 +941,8 @@ class Shop {
 			}
 		}
 	}
+	// Armures achat
+
 	//#endregion
 }
 

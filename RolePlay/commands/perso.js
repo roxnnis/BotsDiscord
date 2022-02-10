@@ -11,12 +11,12 @@ module.exports = {
 		//Commande principale PERSO
 		.setName("personnage")
 		.setDescription("Actions sur un personnage")
-
 		//Perso >> Info
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName("info")
 				.setDescription("Afficher la fiche d'un personnage")
+
 				//Perso >> Info >> Options
 				.addStringOption((option) => option.setName("nom").setDescription("Préciser le nom du personnage").setRequired(true))
 		)
@@ -44,16 +44,6 @@ module.exports = {
 			//Perso >> item >> add >> options
 			//Perso >> item >> del >> options
 		),
-
-	data2: new SlashCommandBuilder()
-		//Commande principale STATS
-		.setName("stats")
-		.setDescription("Modifier une statistique")
-
-		//Stats >> PV
-		.addIntegerOption((option) => option.setName("pv").setDescription("Modifier le nombre de point de vie d'un personnage").setRequired(true))
-		.addStringOption((option) => option.setName("nom").setDescription("Cible de la modification").setRequired(true)
-		),
 	async execute(interaction) {
 
 		if (interaction.commandName == "personnage") {
@@ -62,30 +52,28 @@ module.exports = {
 
 			//INFORMATIONS DU PERSONNAGE
 			if (interaction.options._subcommand == "info") {
-				NomDonne = interaction.options.getString("nom"); //Requête par nom 
+				NomDonne = interaction.options.getString("nom"); //Requête par nom
 				await interaction.reply({ embeds: [PInf.PersoInfo(rolistes)] });
-
-
 			}
 			//AJOUTER UN PERSONNAGE
 			else if (interaction.options._subcommand == "add") {
-				PAdd.PersoAdd(rolistes, interaction);
-				await interaction.reply("Votre personnage vient d'être créé.");
+				if (interaction.user.id == "185352234580574208") {
+					PAdd.PersoAdd(rolistes, interaction);
+					await interaction.reply("Votre personnage vient d'être créé.");
+				} else {
+					await interaction.reply({ content: "Vous n'avez pas les droits d'ajouter un personnage.", ephemeral: true });
+				}
 			}
 			//CHANGER LE DCM
-			else if (interaction.options._subcommand == "dcm") {
+			else if (interaction.options._subcommand == "dcm" && interaction.user.id == "185352234580574208") {
 				NomDonne = interaction.options.getString("nom");
 				rolistes[NomDonne].Dcm = interaction.options.getString("dcm");
 				fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
 				await interaction.reply("Votre DCM vient d'être modifié.");
 				//Personnage dcm set
-				//Snif...
-			} else if (interaction.commandName == "stats") {
-				await interaction.reply("La statistique vient d'être modifiée.");
-			}
-			else {
+			} else {
 				await interaction.reply({
-					content: "Le joueur choisi n'a pas été trouvé (Recherche par Nom).",
+					content: "La commande n'a pas aboutie.",
 					ephemeral: true,
 				});
 			}

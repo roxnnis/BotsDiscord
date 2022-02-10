@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MessageEmbed } = require("discord.js");
 
 //Personnages
 const fs = require("fs");
@@ -8,6 +9,7 @@ const Classes = require("../classes.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
+		//#region command setup
 		//Comande principal Shop
 		.setName("shop")
 		.setDescription("Actions sur le shop")
@@ -31,7 +33,15 @@ module.exports = {
 						.addStringOption((option) => option.setName("qaly").setDescription("Qualité de l'objet").setRequired(false))
 						.addStringOption((option) => option.setName("desc").setDescription("description de l'objet").setRequired(false))
 				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("list")
+						.setDescription("Afficher le contenu de la boutique de consomable")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet / All pour tout afficher").setRequired(true))
+				)
 		)//ok c'est bon merci
+		//#endregion
 	,
 	async execute(interaction) {
 		if (interaction.commandName == "shop") {
@@ -45,38 +55,63 @@ module.exports = {
 			function isNull(input, out) {
 				return input != null ? input : out;
 			}
-			if (interaction.options._group == "item" && interaction.options._subcommand == "add") {
-				var tempo = {
-					Objet: {
-						Nom: interaction.options.getString("nom"),
-						Weight: interaction.options.getInteger("pods"),
-						Quantity: isNull(interaction.options.getInteger("qtty"), 1),
-                        Stackable: isNull(interaction.options.getBoolean("stac"), false)
-					},
-					Prix: interaction.options.getInteger("prix")
-				};
+			//Shop >> Item
+			if (interaction.options._group == "item") {
+				//Shop >> Item >> Add >> options
+				if(interaction.options._subcommand == "add")
+				{
+					var tempo = {
+						Objet: {
+							Nom: interaction.options.getString("nom"),
+							Weight: interaction.options.getInteger("pods"),
+							Quantity: isNull(interaction.options.getInteger("qtty"), 1),
+							Stackable: isNull(interaction.options.getBoolean("stac"), false)
+						},
+						Prix: interaction.options.getInteger("prix")
+					};
+					if(isNull(interaction.options.getInteger("rest"),false))
+					{
+						tempo.Objet["Remain"] = interaction.options.getInteger("rest");
+						if(isNull(interaction.options.getString("unit"),false))
+						{
+							tempo.Objet["Unity"] = interaction.options.getString("unit");
+						}
+					}
 
-                if(isNull(interaction.options.getInteger("rest"),false))
-                {
-                    tempo.Objet["Remain"] = interaction.options.getInteger("rest");
-                    if(isNull(interaction.options.getString("unit"),false))
-                    {
-                        tempo.Objet["Unity"] = interaction.options.getString("unit");
-                    }
-                }
-				/* interaction.options.getInteger("qtty") != null ? tempo.Objet["Quantity"] = 1 :  */
-				/*if(interaction.options.getInteger("qtty") != null){
-					tempo.Objet["Quantity"] = 1;
-				} else {
-					tempo.Objet["Quantity"] = interaction.options.getInteger("qtty");
-				}*/
-				/*		
-						Quality: interaction.options.getString("qaly"),
-						Description: interaction.options.getString("desc")*/
-				console.log(tempo);
-				boutique.shop.ShopObjet = tempo;
-				fs.writeFileSync("Shop.json", JSON.stringify(boutique));
-				await interaction.reply("Item créé");
+					boutique.shop["ShopObjet"][tempo.Objet.Nom] = {
+						Objet: tempo.Objet,
+						Prix: tempo.Prix
+					}
+					
+					fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+					await interaction.reply("Item créé");
+				}
+				else if(interaction.options._subcommand == "list"){
+					if(interaction.options.getString("nom").toLowerCase() == "all")
+					{
+						embed = new MessageEmbed()
+						.setColor("AQUA")
+						.setTitle("Boutique de consommable")
+						.addField("\u200b", "\u200b");
+						
+						EmbObjet = "";
+						if(Object.keys(boutique.shop["ShopObjet"]).length != 0)
+						{
+							for(var key in boutique.shop["ShopObjet"])
+							{
+								EmbObjet +=
+									boutique.shop["ShopObjet"][key].Objet.Nom +
+									"   Prix: " +
+									boutique.shop["ShopObjet"][key].Prix +
+									"\r\n"
+							}
+						} else {
+							EmbObjet = "Rien en boutique aujourd'hui";
+						}
+						embed.addField("Consommable",EmbObjet);
+						await interaction.reply({embeds: [embed]});
+					}
+				}
 			}
 		}
 

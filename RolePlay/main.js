@@ -13,7 +13,6 @@ const salonJDR = ["624474305018855449","924276882898321449"];
 
 //#region Création de personnages
 
-
 //Persos
 Dexhort = new Classes.Personnage({Nom: "MJ",LVL: 96});
 

@@ -217,16 +217,12 @@ module.exports = {
 					}
 				}
 				else if(interaction.options._subcommand == "effect"){
-					console.log("oui");
 					if(typeof boutique.shop.ShopArmes[interaction.options.getString("nom")] === "undefined")
 					{
-						console.log("non");
 						await interaction.reply("L'objet n'existe pas");
 					}
 					else{
-						console.log("je mongolise pas");
 						boutique.shop.ShopArmes[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
-						console.log("j'ai réussi");
 						fs.writeFileSync("Shop.json", JSON.stringify(boutique));
 						await interaction.reply("Effet ajouté");
 					}
@@ -262,6 +258,17 @@ module.exports = {
 					}
 					else{
 						await interaction.reply({embeds: [Spl.ShopListArmure(boutique,interaction.options.getString("nom"))]});
+					}
+				}
+				else if(interaction.options._subcommand == "effect"){
+					if(typeof boutique.shop.ShopArmures[interaction.options.getString("nom")] === "undefined")
+					{
+						await interaction.reply("L'objet n'existe pas");
+					}
+					else{
+						boutique.shop.ShopArmures[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
+						fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+						await interaction.reply("Effet ajouté");
 					}
 				}
 			}

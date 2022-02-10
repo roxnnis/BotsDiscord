@@ -128,7 +128,7 @@ function ShopListArme(boutique,objetnom){
                                 "\r\nTu peux tirer " + boutique.shop["ShopArmes"][objetnom].Objet.Munitions.Chargeur + " fois avant de devoir recharger" +
                                 "\r\nEt je veux bien te faire cadeau de " + boutique.shop["ShopArmes"][objetnom].Objet.Munitions.Reserve + " munitions";
                         }
-                        if(typeof boutique.shop["ShopArmes"][objetnom].Objet.Effects !== "undefined"){
+                        if(Object.keys(boutique.shop["ShopArmes"][objetnom].Objet.Effects).length != 0){
                             EmbObjet +=
                                 "\r\n\nEt je suis assez fière de ses capacités !";
                             for(var key in boutique.shop["ShopArmes"][objetnom].Objet.Effects)
@@ -200,7 +200,7 @@ function ShopListArmure(boutique,objetnom){
                             "\r\nEt d'environs " + boutique.shop["ShopArmures"][objetnom].Objet.Res.MEN + " sur le plan mental";
 
                         
-                        if(typeof boutique.shop["ShopArmures"][objetnom].Objet.Effects !== "undefined"){
+                        if(Object.keys(boutique.shop["ShopArmures"][objetnom].Objet.Effects).length != 0){
                             EmbObjet +=
                                 "\r\n\nAprès réflexion, je crois me souvenir que cette tenue donne ";
                             for(var key in boutique.shop["ShopArmures"][objetnom].Objet.Effects)

@@ -67,6 +67,15 @@ module.exports = {
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme. *all* pour tout afficher").setRequired(true))
 				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("effect")
+						.setDescription("Afficher le contenu de l'armurerie")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme qui va recevoir l'effet").setRequired(true))
+						.addStringOption((option) => option.setName("efct").setDescription("Nom de l'effet").setRequired(true))
+						.addStringOption((option) => option.setName("stat").setDescription("Effet").setRequired(true))
+				)
 		)
 		.addSubcommandGroup(subcommandgroup =>
 			subcommandgroup
@@ -91,6 +100,15 @@ module.exports = {
 						.setDescription("Afficher le contenu de l'armurerie")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet / All pour tout afficher").setRequired(true))
+				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("effect")
+						.setDescription("Afficher le contenu de l'armurerie")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'armure qui va recevoir l'effet").setRequired(true))
+						.addStringOption((option) => option.setName("efct").setDescription("Nom de l'effet").setRequired(true))
+						.addStringOption((option) => option.setName("stat").setDescription("Effet").setRequired(true))
 				)
 		)
 		//#endregion
@@ -160,6 +178,7 @@ module.exports = {
 							Weight: interaction.options.getInteger("pods"),
 							Damage: interaction.options.getInteger("dega"),
 							Precision: interaction.options.getInteger("prec"),
+							Effects: {}
 						},
 						Prix: interaction.options.getInteger("prix")
 					};
@@ -197,6 +216,21 @@ module.exports = {
 						await interaction.reply({embeds: [Spl.ShopListArme(boutique,interaction.options.getString("nom"))]});
 					}
 				}
+				else if(interaction.options._subcommand == "effect"){
+					console.log("oui");
+					if(typeof boutique.shop.ShopArmes[interaction.options.getString("nom")] === "undefined")
+					{
+						console.log("non");
+						await interaction.reply("L'objet n'existe pas");
+					}
+					else{
+						console.log("je mongolise pas");
+						boutique.shop.ShopArmes[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
+						console.log("j'ai réussi");
+						fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+						await interaction.reply("Effet ajouté");
+					}
+				}
 			}
 			else if (interaction.options._group == "armure") {
 				//Shop >> Item >> Add >> options
@@ -208,6 +242,7 @@ module.exports = {
 							Type: interaction.options.getString("type"),
 							Weight: interaction.options.getInteger("pods"),
 							Res: { PHY: interaction.options.getInteger("rphy"), MEN: interaction.options.getInteger("rmen")},
+							Effects: {}
 						},
 						Prix: interaction.options.getInteger("prix")
 					};

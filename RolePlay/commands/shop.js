@@ -6,6 +6,7 @@ const fs = require("fs");
 var Pers = fs.readFileSync("./Personnages.json");
 const Classes = require("../classes.js");
 const Spl = require("./fonctions/shopList.js");
+const AdIn = require("./fonctions/addInventory.js");
 
 
 module.exports = {
@@ -41,6 +42,15 @@ module.exports = {
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet. *all* pour tout afficher").setRequired(true))
 				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("buy")
+						.setDescription("Acheter un objet")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom du Joueur").setRequired(true))
+						.addStringOption((option) => option.setName("item").setDescription("Nom de l'objet").setRequired(true))
+						.addStringOption((option) => option.setName("qtty").setDescription("Quantité acheté").setRequired(false))
+				)
 		)
 		.addSubcommandGroup(subcommandgroup =>
 			subcommandgroup
@@ -70,11 +80,19 @@ module.exports = {
 				.addSubcommand(subcommand =>
 					subcommand
 						.setName("effect")
-						.setDescription("Afficher le contenu de l'armurerie")
+						.setDescription("Ajouter un effet à une arme")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme qui va recevoir l'effet").setRequired(true))
 						.addStringOption((option) => option.setName("efct").setDescription("Nom de l'effet").setRequired(true))
 						.addStringOption((option) => option.setName("stat").setDescription("Effet").setRequired(true))
+				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("buy")
+						.setDescription("Acheter une arme")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom du Joueur").setRequired(true))
+						.addStringOption((option) => option.setName("arme").setDescription("Nom de l'arme").setRequired(true))
 				)
 		)
 		.addSubcommandGroup(subcommandgroup =>
@@ -104,11 +122,19 @@ module.exports = {
 				.addSubcommand(subcommand =>
 					subcommand
 						.setName("effect")
-						.setDescription("Afficher le contenu de l'armurerie")
+						.setDescription("Ajouter un effet à une armure")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'armure qui va recevoir l'effet").setRequired(true))
 						.addStringOption((option) => option.setName("efct").setDescription("Nom de l'effet").setRequired(true))
 						.addStringOption((option) => option.setName("stat").setDescription("Effet").setRequired(true))
+				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("buy")
+						.setDescription("Acheter une armure")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("nom").setDescription("Nom du Joueur").setRequired(true))
+						.addStringOption((option) => option.setName("armure").setDescription("Nom de l'armure").setRequired(true))
 				)
 		)
 		//#endregion
@@ -156,6 +182,7 @@ module.exports = {
 					fs.writeFileSync("Shop.json", JSON.stringify(boutique));
 					await interaction.reply("Item créé");
 				}
+				//Shop >> Item >> List >> options
 				else if(interaction.options._subcommand == "list"){
 					if(interaction.options.getString("nom").toLowerCase() == "all")
 					{
@@ -164,6 +191,38 @@ module.exports = {
 					else{
 						await interaction.reply({embeds: [Spl.ShopListObjet(boutique,interaction.options.getString("nom"))]});
 					}
+				}
+				//Shop >> Item >> Buy >> options
+				else if(interaction.options._subcommand == "buy"){
+					qtt = interaction.options.getInteger("qtty");
+					nomObjet = interaction.options.getString("item");
+					joueurNom = interaction.options.getString("nom");
+					if(qtt <= 0){qtt = 1;}
+					try {
+						if (typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
+						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else {
+							if (rolistes[joueurNom].Money >= (boutique.shop.ShopObjet[nomObjet].Prix * qtt)){
+								for(i=0;i<qtt;i++){
+									rolistes = AdIn.AddInventory(rolistes,boutique,nomObjet,joueurNom);
+								}
+								rolistes[joueurNom].Money -= boutique.shop.ShopObjet[nomObjet].Prix * qtt;
+								fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
+								await interaction.reply({ content: joueurNom + " à acheter " + qtt + " " + nomObjet, ephemeral : true});
+							}
+							else{
+								await interaction.reply({ content: "Le joueur " + joueurNom + " n'a pas assez d'argent pour acheter " + nomObjet, ephemeral : true});
+							}
+						}
+					} catch(err){
+						if(err == "No Item"){
+							await interaction.reply({ content: "Il n'y a pas d'item de ce nom dans le shop", ephemeral : true});
+						}
+						else if(err == "No player"){
+							await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral : true});
+						}
+					}
+
 				}
 			}
 			else if (interaction.options._group == "arme") {

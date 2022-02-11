@@ -55,7 +55,7 @@ module.exports = {
 		}
 		//AJOUTER UN PERSONNAGE
 		else if (interaction.options._subcommand == "add") {
-			if (interaction.user.id == "185352234580574208") {
+			if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
 				//Ajout
 				PAdd.PersoAdd(rolistes, interaction);
 				await interaction.reply("Votre personnage vient d'être créé.");
@@ -66,7 +66,7 @@ module.exports = {
 		}
 		//CHANGER LE DCM
 		else if (interaction.options._subcommand == "dcm") {
-			if (interaction.user.id == "185352234580574208") {
+			if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
 			NomDonne = interaction.options.getString("nom"); //Requête par nom
 			rolistes[NomDonne].Dcm = interaction.options.getString("dcm");
 			fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));

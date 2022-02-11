@@ -44,3 +44,5 @@ class Stats {
 	}
 	//#endregion
 }
+
+exports.Stats = Stats;

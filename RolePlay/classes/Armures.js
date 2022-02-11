@@ -57,3 +57,5 @@ class Armures {
 	}
 	//#endregion
 }
+
+exports.Armures = Armures;

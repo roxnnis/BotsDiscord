@@ -1,13 +1,10 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
 
 //Personnages
 const fs = require("fs");
 var Pers = fs.readFileSync("./Personnages.json");
-const Classes = require("../classes.js");
 const Spl = require("./fonctions/shopList.js");
 const AdIn = require("./fonctions/addInventory.js");
-
 
 module.exports = {
 	data: new SlashCommandBuilder()

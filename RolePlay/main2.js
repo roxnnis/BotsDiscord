@@ -1,18 +1,33 @@
-const Shop = require("./shop.js");
+//Requires
+	//File Search
+	const fs = require("fs");
 
-//Intégrer les commandes
-bot.commands = new Collection();
-const commandFiles = fs
-	.readdirSync("./commands")
-	.filter((file) => file.endsWith(".js"));
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	// Set a new item in the Collection
-	// With the key as the command name and the value as the exported module
-	bot.commands.set(command.data.name, command);
-}
+//Lancement du bot
+	const Discord = require(`./bot/setup.js`);
+	var bot = Discord.botCreate(JSON.parse(fs.readFileSync(`./bot/BotConfig.json`)).Token);
 
-//#region Commandes du Bot
+//Salons Autorisés
+	const salonJDR = ["624474305018855449","924276882898321449"];
+
+//Récupérer les classes
+const { Personnages } = require(`./classes/Personnages`);
+
+
+//Paramètre de test --------------------------------
+var Dexhort = new Personnages({Nom: "MJ",LVL: 96});
+//--------------------------------------------------
+
+
+//Rolistes (Registre de personnages)
+var rolistes = JSON.parse(fs.readFileSync("./Personnages.json"));
+
+//Écriture dans le JSON
+fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
+
+//
+
+
+//
 bot.on("interactionCreate", async (interaction) => {
 
 	if (!interaction.isCommand() || !salonJDR.includes(interaction.channelId))
@@ -46,4 +61,3 @@ bot.on("interactionCreate", async (interaction) => {
 		}
 	}
 });
-//#endregion

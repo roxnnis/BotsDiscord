@@ -239,3 +239,5 @@ class Objets {
 
 	//#endregion
 }
+
+exports.Objets = Objets;

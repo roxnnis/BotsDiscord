@@ -1,10 +1,17 @@
-const Classes = require("../../classes.js");
-//C:/Users/User/Documents/Bot Discord/BotsDiscord/RolePlay/
+//File Search
 const fs = require("fs");
 
+//Récupérer les classes
+const { Personnages } = require(`../../classes/Personnages`);
+
+/**
+ * Ajoute un personnage dans le registre.
+ * @param rolistes : Dictionnaire contenant tous les personnages (Disparition prochaine...)
+ * @param interaction : Commande slash dont on récupère les informations
+ */
 function PersoAdd(rolistes, interaction){
 
-	tempo = new Classes.Personnage({
+	tempo = new Personnages({
 		Nom: interaction.options.getString("nom"),
 		Stats: new Classes.Stats(
 			{

@@ -14,7 +14,7 @@ class Shops {
 			Consommable = this.#CONSOMMABLES
 		} = {}
 		//#endregion 
-		//#region Variables appliquées au constructeur
+	//#region Variables appliquées au constructeur
 	) {
 		this.#ARMES = Armes;
 		this.#ARMURES = Armures;
@@ -88,14 +88,7 @@ class Shops {
 			}), Prix: objet.Prix
 		}};
 	}
-	// Fonction Achat Consommable
-	// Shop buy Item NomJoueur NomItem Quantity
-	/* 
-		Penser à ajouter un moyen d'afficher le shop :eyes:
-		Penser à ajouter un moyen d'afficher le shop :eyes:
-		Penser à ajouter un moyen d'afficher le shop :eyes:
-	*/
-	// Armures achat
-
 	//#endregion
 }
+
+exports.Shops = Shops;

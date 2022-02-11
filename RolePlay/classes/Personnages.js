@@ -1,4 +1,10 @@
-class Personnage {
+//Récupérer les classes
+const { Armes } = require("./Armes");
+const { Armures } = require("./Armures");
+const { Stats } = require("./Stats");
+const { Objets } = require("./Objets");
+
+class Personnages {
 	//#region Caractéristiques privées de base
 	#NOM = "Charlie";
 	#PV;
@@ -275,7 +281,7 @@ class Personnage {
 		{
 			var i = 0;
 			while(i = 0 || typeof this.#INV[key + i] === "undefined"){i++;}
-			this.#INV[key + i] = new Objet({
+			this.#INV[key + i] = new Objets({
 				Nom:objet.Nom,
 				Quantity:objet.Quantity,
 				Stackable:objet.Stackable,
@@ -286,7 +292,7 @@ class Personnage {
 				Description:objet.Description
 			});
 		} else if (objet.Stackable == false && typeof this.#INV[key] === "undefined"){
-			this.#INV[key] = new Objet({
+			this.#INV[key] = new Objets({
 				Nom:objet.Nom,
 				Quantity:objet.Quantity,
 				Stackable:objet.Stackable,
@@ -299,7 +305,7 @@ class Personnage {
 		} else if (objet.Stackable == true && typeof this.#INV[key] !== "undefined"){
 			this.#INV[key] += objet.Quantity;
 		} else{
-			this.#INV[key] += new Objet({
+			this.#INV[key] += new Objets({
 				Nom:objet.Nom,
 				Quantity:objet.Quantity,
 				Stackable:objet.Stackable,
@@ -333,3 +339,5 @@ class Personnage {
 	}
 	//#endregion
 }
+
+exports.Personnages = Personnages;

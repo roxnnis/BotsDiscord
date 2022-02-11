@@ -133,3 +133,5 @@ class Armes {
 	}
 	//#endregion
 }
+
+exports.Armes = Armes;

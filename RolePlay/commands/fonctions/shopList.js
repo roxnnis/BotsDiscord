@@ -1,6 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 
-function ShopListObjet(boutique,objetnom){
+function ShopListObjet(boutique,objetnom,joueur){
+    var Privacy = false;
     if(objetnom == "all")
     {
         embed = new MessageEmbed()
@@ -9,27 +10,38 @@ function ShopListObjet(boutique,objetnom){
             .addField("\u200b", "\u200b");
             
             EmbObjet = "";
+            Privacy = false;
             if(Object.keys(boutique.shop["ShopObjet"]).length != 0)
             {
+                EmbObjet = "Voilà mon stock \r\n\n";
                 for(var key in boutique.shop["ShopObjet"])
                 {
-                    EmbObjet +=
-                        boutique.shop["ShopObjet"][key].Objet.Nom +
-                        " à " +
-                        boutique.shop["ShopObjet"][key].Prix + " crédits";
-                    
-                    if(boutique.shop["ShopObjet"][key].Objet.Quantity != 1){
+                    if(boutique.shop["ShopObjet"][key].Visible)
+                    {
                         EmbObjet +=
-                            " le lot de " + boutique.shop["ShopObjet"][key].Objet.Quantity;
+                            boutique.shop["ShopObjet"][key].Objet.Nom +
+                            " à " +
+                            boutique.shop["ShopObjet"][key].Prix + " crédits";
+                        
+                        if(boutique.shop["ShopObjet"][key].Objet.Quantity != 1){
+                            EmbObjet +=
+                                " le lot de " + boutique.shop["ShopObjet"][key].Objet.Quantity;
+                        }
+                        EmbObjet +=
+                            "\r\n";
                     }
-                    EmbObjet +=
-                        "\r\n";
+                }
+                if(EmbObjet == "Voilà mon stock \r\n\n")
+                {
+                    EmbObjet = "J'ai rien pour toi";
+                    Privacy = true;
                 }
             } else {
                 EmbObjet = "J'ai rien pour toi";
+                Privacy = true;
         }
-        embed.addField("Marchand: Voilà mon stock",EmbObjet);
-        return embed;
+        embed.addField("Marchand:",EmbObjet);
+        return {message: embed, privee: Privacy};
     }
     else {
         try{
@@ -41,9 +53,14 @@ function ShopListObjet(boutique,objetnom){
                     .addField("\u200b", "\u200b");
                     
                     EmbObjet = "";
-                    if(Object.keys(boutique.shop["ShopObjet"]).length != 0)
+                    Privacy = false;
+                    if(Object.keys(boutique.shop["ShopObjet"]).length != 0 && 
+                        (boutique.shop["ShopObjet"][objetnom].Visible || 
+                        (typeof joueur !== "undefined" && typeof joueur.Inv[objetnom] !== "undefined"))
+                    )
                     {
                         EmbObjet += 
+                            "On touche avec les yeux \r\n\n" +
                             boutique.shop["ShopObjet"][objetnom].Objet.Nom +
                             "\r\nPoids: " + boutique.shop["ShopObjet"][objetnom].Objet.Weight + " kg" +
                             "\r\nPrix: " + boutique.shop["ShopObjet"][objetnom].Prix + " crédits";
@@ -61,24 +78,26 @@ function ShopListObjet(boutique,objetnom){
                             EmbObjet +=
                                 "\r\n\n" + boutique.shop["ShopObjet"][objetnom].Objet.Description;
                         }
-
+                        Privacy = !boutique.shop["ShopObjet"][objetnom].Visible;
                     } else {
-                        EmbObjet = "J'ai rien pour toi";
+                        EmbObjet = "Revenez quand vous saurez ce que vous voulez !";
+                        Privacy = true;
                     }
-                embed.addField("Marchand: On touche avec les yeux",EmbObjet);
-                return embed;
+                embed.addField("Marchand:",EmbObjet);
+                return {message: embed, privee: Privacy};
             }
         } catch(err){
             if(err == "No Item"){
-                embed = new MessageEmbed().setColor("AQUA").setTitle("Boutique de consommable").addField("\u200b", "\u200b").addField("Marchand:","J'ai pas cet objet dans ma boutique mon petit");
-                return embed;
+                embed = new MessageEmbed().setColor("AQUA").setTitle("Boutique de consommable").addField("\u200b", "\u200b").addField("Marchand:","Revenez quand vous saurez ce que vous voulez !");
+                return {message: embed, privee: true};
             }
         }
         
     }
 }
 
-function ShopListArme(boutique,objetnom){
+function ShopListArme(boutique,objetnom,joueur){
+    var Privacy = false;
     if(objetnom == "all")
     {
         embed = new MessageEmbed()
@@ -87,21 +106,33 @@ function ShopListArme(boutique,objetnom){
             .addField("\u200b", "\u200b");
             
             EmbObjet = "";
+            Privacy = false;
             if(Object.keys(boutique.shop["ShopArmes"]).length != 0)
             {
-                for(var key in boutique.shop["ShopArmes"])
+                EmbObjet = "J'ai de tout pour tout le monde !\r\n\n";
+
+                    for(var key in boutique.shop["ShopArmes"])
+                    {
+                        if(boutique.shop["ShopArmes"][key].Visible)
+                        {
+                            EmbObjet +=
+                                boutique.shop["ShopArmes"][key].Objet.Nom +
+                                " à " +
+                                boutique.shop["ShopArmes"][key].Prix + " crédits" +
+                                "\r\n";
+                        }
+                    }
+                if(EmbObjet == "J'ai de tout pour tout le monde !\r\n\n")
                 {
-                    EmbObjet +=
-                        boutique.shop["ShopArmes"][key].Objet.Nom +
-                        " à " +
-                        boutique.shop["ShopArmes"][key].Prix + " crédits" +
-                        "\r\n";
+                    EmbObjet = "J'ai rien en boutique, repasse une autre fois";
+                    Privacy = true;
                 }
             } else {
                 EmbObjet = "J'ai rien en boutique, repasse une autre fois";
+                Privacy = true;
         }
-        embed.addField("Forgerons: J'ai de tout pour tout le monde !",EmbObjet);
-        return embed;
+        embed.addField("Forgerons:",EmbObjet);
+        return {message: embed, privee: Privacy};
     }
     else {
         try{
@@ -113,9 +144,14 @@ function ShopListArme(boutique,objetnom){
                     .addField("\u200b", "\u200b");
                     
                     EmbObjet = "";
-                    if(Object.keys(boutique.shop["ShopArmes"]).length != 0)
+                    Privacy = false;
+                    if(Object.keys(boutique.shop["ShopArmes"]).length != 0 && 
+                        (boutique.shop["ShopArmes"][objetnom].Visible || 
+                        (typeof joueur !== "undefined" && typeof joueur.Weapons.Principale[objetnom] !== "undefined" || typeof joueur.Weapons.Auxiliaire[objetnom] !== "undefined"))
+                    )
                     {
                         EmbObjet += 
+                            "Admire ce chef-d'oeuvre !\r\n\n" +
                             boutique.shop["ShopArmes"][objetnom].Objet.Nom +
                             "\r\nCe petit bébé pèse " + boutique.shop["ShopArmes"][objetnom].Objet.Weight + " kg" +
                             "\r\nEt coûte seulement " + boutique.shop["ShopArmes"][objetnom].Prix + " crédits !" +
@@ -139,23 +175,27 @@ function ShopListArme(boutique,objetnom){
                         EmbObjet +=
                                 "\r\n\nC'est une affaire en or !";
 
+                        Privacy = !boutique.shop["ShopArmes"][objetnom].Visible;
+
                     } else {
-                        EmbObjet = "J'ai rien en boutique, repasse une autre fois";
+                        EmbObjet = "J'ai pas ça je crois bien, désolé";
+                        Privacy = true;
                     }
-                embed.addField("Forgerons: Admire ce chef-d'oeuvre !",EmbObjet);
-                return embed;
+                embed.addField("Forgerons:",EmbObjet);
+                return {message: embed, privee: Privacy};
             }
         } catch(err){
             if(err == "No Item"){
                 embed = new MessageEmbed().setColor("AQUA").setTitle("Forge d'arme").addField("\u200b", "\u200b").addField("Forgerons:","J'ai pas cet arme ici mon petit");
-                return embed;
+                return {message: embed, privee: true};
             }
         }
         
     }
 }
 
-function ShopListArmure(boutique,objetnom){
+function ShopListArmure(boutique,objetnom,joueur){
+    var Privacy = false;
     if(objetnom == "all")
     {
         embed = new MessageEmbed()
@@ -164,21 +204,32 @@ function ShopListArmure(boutique,objetnom){
             .addField("\u200b", "\u200b");
             
             EmbObjet = "";
+            Privacy = false;
             if(Object.keys(boutique.shop["ShopArmures"]).length != 0)
             {
+                EmbObjet = "J'ai quelques trucs qui traine, à toi de voir ce que tu veux\r\n\n";
                 for(var key in boutique.shop["ShopArmures"])
                 {
-                    EmbObjet +=
-                        boutique.shop["ShopArmures"][key].Objet.Nom +
-                        " à " +
-                        boutique.shop["ShopArmures"][key].Prix + " crédits" +
-                        "\r\n";
+                    if(boutique.shop["ShopArmures"][key].Visible)
+                    {
+                        EmbObjet +=
+                            boutique.shop["ShopArmures"][key].Objet.Nom +
+                            " à " +
+                            boutique.shop["ShopArmures"][key].Prix + " crédits" +
+                            "\r\n";
+                    }
+                }
+                if(EmbObjet == "J'ai quelques trucs qui traine, à toi de voir ce que tu veux")
+                {
+                    EmbObjet = "J'ai déjà tout écoulé on dirait, désolé";
+                    Privacy = true;
                 }
             } else {
                 EmbObjet = "J'ai déjà tout écoulé on dirait, désolé";
+                Privacy = true;
         }
-        embed.addField("Armurier: J'ai quelques trucs qui traine, à toi de voir ce que tu veux",EmbObjet);
-        return embed;
+        embed.addField("Armurier:",EmbObjet);
+        return {message: embed, privee: Privacy};
     }
     else {
         try{
@@ -190,9 +241,15 @@ function ShopListArmure(boutique,objetnom){
                     .addField("\u200b", "\u200b");
                     
                     EmbObjet = "";
-                    if(Object.keys(boutique.shop["ShopArmures"]).length != 0)
+                    Possedee = false;
+                    Privacy = false;
+                    if(Object.keys(boutique.shop["ShopArmures"]).length != 0 && 
+                        (boutique.shop["ShopArmures"][objetnom].Visible || 
+                        (typeof joueur !== "undefined" && typeof joueur.Armors.Principale[objetnom] !== "undefined"))
+                    )
                     {
                         EmbObjet += 
+                            "Vas-y, te gènes pas, tu peux regarder de plus près \r\n\n" +
                             boutique.shop["ShopArmures"][objetnom].Objet.Nom +
                             "\r\nQui doit peser un bon " + boutique.shop["ShopArmures"][objetnom].Objet.Weight + " kg" +
                             "\r\nC'est a peu près normal pour des tenus en " + boutique.shop["ShopArmures"][objetnom].Objet.Type +
@@ -212,16 +269,19 @@ function ShopListArmure(boutique,objetnom){
                         EmbObjet +=
                             "\r\n\nJe te la fais pour " + boutique.shop["ShopArmures"][objetnom].Prix + " crédits";
 
+                        Privacy = !boutique.shop["ShopArmures"][objetnom].Visible;
+
                     } else {
                         EmbObjet = "J'ai déjà tout écoulé on dirait, désolé";
+                        Privacy = true;
                     }
-                embed.addField("Armurier: Vas-y, te gènes pas, tu peux regarder de plus près",EmbObjet);
-                return embed;
+                embed.addField("Armurier:",EmbObjet);
+                return {message: embed, privee: Privacy};
             }
         } catch(err){
             if(err == "No Item"){
                 embed = new MessageEmbed().setColor("AQUA").setTitle("Armurerie").addField("\u200b", "\u200b").addField("Armurier:","Si tu l'as pas trouvé c'est que je dois pas l'avoir, désolé");
-                return embed;
+                return {message: embed, privee: true};
             }
         }
         

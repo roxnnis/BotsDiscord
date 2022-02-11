@@ -27,7 +27,7 @@ function AddInventory(rolistes,objet,joueurNom){
     } else if (objet.Stackable == true && typeof rolistes[joueurNom].Inv[nomObjet] !== "undefined"){
         rolistes[joueurNom].Inv[nomObjet] += objet.Quantity;
     } else{
-        rolistes[joueurNom].Inv[nomObjet] += {
+        rolistes[joueurNom].Inv[nomObjet] = {
             Nom:objet.Nom,
             Quantity:objet.Quantity,
             Stackable:objet.Stackable,

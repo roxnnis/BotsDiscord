@@ -21,6 +21,7 @@ module.exports = {
 						.setName("add")
 						.setDescription("Ajoute un objet")
 						// shop >> item >> add >> options
+						.addBooleanOption((option) => option.setName("visi").setDescription("L'item est-il visible dans le shop").setRequired(true))
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet").setRequired(true))
 						.addIntegerOption((option) => option.setName("pods").setDescription("Poid de L'objet dans l'inventaire").setRequired(true))
 						.addIntegerOption((option) => option.setName("prix").setDescription("Prix de l'objet").setRequired(true))
@@ -37,6 +38,7 @@ module.exports = {
 						.setDescription("Afficher le contenu de la boutique de consomable")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet. *all* pour tout afficher").setRequired(true))
+						.addStringOption((option) => option.setName("joueur").setDescription("Joueur demandant la requête").setRequired(false))
 				)
 				.addSubcommand(subcommand =>
 					subcommand
@@ -58,6 +60,7 @@ module.exports = {
 						.setName("add")
 						.setDescription("Ajoute une arme")
 						// shop >> item >> add >> options
+						.addBooleanOption((option) => option.setName("visi").setDescription("L'arme est-elle visible dans le shop").setRequired(true))
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme").setRequired(true))
 						.addStringOption((option) => option.setName("type").setDescription("Type de l'arme").setRequired(true))
 						.addIntegerOption((option) => option.setName("main").setDescription("Nombre de main utilisé").setRequired(true))
@@ -72,6 +75,7 @@ module.exports = {
 						.setDescription("Afficher le contenu de la forge d'arme")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme. *all* pour tout afficher").setRequired(true))
+						.addStringOption((option) => option.setName("joueur").setDescription("Joueur demandant la requête").setRequired(false))
 				)
 				.addSubcommand(subcommand =>
 					subcommand
@@ -103,6 +107,7 @@ module.exports = {
 						.setName("add")
 						.setDescription("Ajoute une armure")
 						// shop >> item >> add >> options
+						.addBooleanOption((option) => option.setName("visi").setDescription("L'armure est-elle visible dans le shop").setRequired(true))
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'armure").setRequired(true))
 						.addStringOption((option) => option.setName("type").setDescription("Type de l'armure").setRequired(true))
 						.addIntegerOption((option) => option.setName("pods").setDescription("Poid de l'armure").setRequired(true))
@@ -116,6 +121,7 @@ module.exports = {
 						.setDescription("Afficher le contenu de l'armurerie")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet / All pour tout afficher").setRequired(true))
+						.addStringOption((option) => option.setName("joueur").setDescription("Joueur demandant la requête").setRequired(false))
 				)
 				.addSubcommand(subcommand =>
 					subcommand
@@ -161,7 +167,8 @@ module.exports = {
 							Quantity: isNull(interaction.options.getInteger("qtty"), 1),
 							Stackable: isNull(interaction.options.getBoolean("stac"), false)
 						},
-						Prix: interaction.options.getInteger("prix")
+						Prix: interaction.options.getInteger("prix"),
+						Visible: interaction.options.getBoolean("visi")
 					};
 					if(isNull(interaction.options.getInteger("rest"),false))
 					{
@@ -174,7 +181,8 @@ module.exports = {
 
 					boutique.shop["ShopObjet"][tempo.Objet.Nom] = {
 						Objet: tempo.Objet,
-						Prix: tempo.Prix
+						Prix: tempo.Prix,
+						Visible: tempo.Visible
 					}
 					
 					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
@@ -182,13 +190,15 @@ module.exports = {
 				}
 				//Shop >> Item >> List >> options
 				else if(interaction.options._subcommand == "list"){
+					var mssProperty = {message : "Rien a dire", privee : true};
 					if(interaction.options.getString("nom").toLowerCase() == "all")
 					{
-						await interaction.reply({embeds: [Spl.ShopListObjet(boutique,"all")]});
+						mssProperty = Spl.ShopListObjet(boutique,"all",rolistes[interaction.options.getString("joueur")]);
 					}
 					else{
-						await interaction.reply({embeds: [Spl.ShopListObjet(boutique,interaction.options.getString("nom"))]});
+						mssProperty = Spl.ShopListObjet(boutique,interaction.options.getString("nom"),rolistes[interaction.options.getString("joueur")]);
 					}
+					await interaction.reply({embeds: [mssProperty.message], ephemeral: mssProperty.privee});
 				}
 				//Shop >> Item >> Buy >> options
 				else if(interaction.options._subcommand == "buy"){
@@ -237,7 +247,8 @@ module.exports = {
 							Precision: interaction.options.getInteger("prec"),
 							Effects: {}
 						},
-						Prix: interaction.options.getInteger("prix")
+						Prix: interaction.options.getInteger("prix"),
+						Visible: interaction.options.getBoolean("visi")
 					};
 					if (["Arc", "Fusil", "Pistolet"].includes(tempo.Objet.Type)) {
 						switch (tempo.Objet.Type) {
@@ -258,20 +269,23 @@ module.exports = {
 
 					boutique.shop["ShopArmes"][tempo.Objet.Nom] = {
 						Objet: tempo.Objet,
-						Prix: tempo.Prix
+						Prix: tempo.Prix,
+						Visible: tempo.Visible
 					}
 					
 					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 					await interaction.reply("Arme créé");
 				}
 				else if(interaction.options._subcommand == "list"){
+					var mssProperty = {message : "Rien a dire", privee : true};
 					if(interaction.options.getString("nom").toLowerCase() == "all")
 					{
-						await interaction.reply({embeds: [Spl.ShopListArme(boutique,"all")]});
+						mssProperty = Spl.ShopListArme(boutique,"all",rolistes[interaction.options.getString("joueur")]);
 					}
 					else{
-						await interaction.reply({embeds: [Spl.ShopListArme(boutique,interaction.options.getString("nom"))]});
+						mssProperty = Spl.ShopListArme(boutique,interaction.options.getString("nom"),rolistes[interaction.options.getString("joueur")]);
 					}
+					await interaction.reply({embeds: [mssProperty.message], ephemeral: mssProperty.privee});
 				}
 				else if(interaction.options._subcommand == "effect"){
 					if(typeof boutique.shop.ShopArmes[interaction.options.getString("nom")] === "undefined")
@@ -333,25 +347,29 @@ module.exports = {
 							Res: { PHY: interaction.options.getInteger("rphy"), MEN: interaction.options.getInteger("rmen")},
 							Effects: {}
 						},
-						Prix: interaction.options.getInteger("prix")
+						Prix: interaction.options.getInteger("prix"),
+						Visible: interaction.options.getBoolean("visi")
 					};
 
 					boutique.shop["ShopArmures"][tempo.Objet.Nom] = {
 						Objet: tempo.Objet,
-						Prix: tempo.Prix
+						Prix: tempo.Prix,
+						Visible: tempo.Visible
 					}
 					
 					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 					await interaction.reply("Armure créé");
 				}
 				else if(interaction.options._subcommand == "list"){
+					var mssProperty = {message : "Rien a dire", privee : true};
 					if(interaction.options.getString("nom").toLowerCase() == "all")
 					{
-						await interaction.reply({embeds: [Spl.ShopListArmure(boutique,"all")]});
+						mssProperty = Spl.ShopListArmure(boutique,"all",rolistes[interaction.options.getString("joueur")]);
 					}
 					else{
-						await interaction.reply({embeds: [Spl.ShopListArmure(boutique,interaction.options.getString("nom"))]});
+						mssProperty = Spl.ShopListArmure(boutique,interaction.options.getString("nom"),rolistes[interaction.options.getString("joueur")]);
 					}
+					await interaction.reply({embeds: [mssProperty.message], ephemeral: mssProperty.privee});
 				}
 				else if(interaction.options._subcommand == "effect"){
 					if(typeof boutique.shop.ShopArmures[interaction.options.getString("nom")] === "undefined")
@@ -398,6 +416,5 @@ module.exports = {
 				}
 			}
 		}
-
 	}
 }

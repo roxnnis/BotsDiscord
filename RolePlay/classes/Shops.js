@@ -42,7 +42,8 @@ class Shops {
 				Damage: arme.Objet.Damage,
 				Munitions: arme.Objet.Munitions,
 				Precision: arme.Objet.Precision
-			}), Prix: arme.Prix
+			}), Prix: arme.Prix,
+			Visible: arme.Visible
 		};
 	}
 	// Armures ___
@@ -62,7 +63,8 @@ class Shops {
 				Weight: armure.Objet.Weight,
 				Res: armure.Objet.Res,
 				Effects: armure.Objet.Effects
-			}), Prix: armure.Prix
+			}), Prix: armure.Prix,
+			Visible: armure.Visible
 		}};
 	}
 	// Consommable __
@@ -85,7 +87,8 @@ class Shops {
 				Quality: objet.Objet.Quality,
 				Weight: objet.Objet.Weight,
 				Description: objet.Objet.Description
-			}), Prix: objet.Prix
+			}), Prix: objet.Prix,
+			Visible: objet.Visible
 		}};
 	}
 	//#endregion

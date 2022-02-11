@@ -20,7 +20,6 @@ var Dexhort = new Personnages({Nom: "MJ",LVL: 96});
 
 //Rolistes (Registre de personnages)
 var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
-console.log("23Main - ", rolistes);
 
 //Écriture dans le JSON
 fs.writeFileSync(`./donnees/Personnages.json`, JSON.stringify(rolistes));

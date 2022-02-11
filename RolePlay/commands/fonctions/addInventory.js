@@ -1,9 +1,6 @@
-function AddInventory(rolistes,boutique,nomObjet,joueurNom){
-    objet = boutique.shop.ShopObjet[nomObjet].Objet;
-    console.log(objet);
+function AddInventory(rolistes,objet,joueurNom){
     if(objet.Stackable == false && typeof rolistes[joueurNom].Inv[nomObjet] !== "undefined")
     {
-        console.log("entré 1");
         var i = 0;
         while(i = 0 || typeof rolistes[joueurNom].Inv[nomObjet + i] !== "undefined"){i++;}
         rolistes[joueurNom].Inv[nomObjet + i] = {
@@ -16,9 +13,7 @@ function AddInventory(rolistes,boutique,nomObjet,joueurNom){
             Weight:objet.Weight,
             Description:objet.Description
         };
-        console.log("entré 1");
     } else if (objet.Stackable == false && typeof rolistes[joueurNom].Inv[nomObjet] === "undefined"){
-        console.log("entré 2");
         rolistes[joueurNom].Inv[nomObjet] = {
             Nom:objet.Nom,
             Quantity:objet.Quantity,
@@ -29,12 +24,9 @@ function AddInventory(rolistes,boutique,nomObjet,joueurNom){
             Weight:objet.Weight,
             Description:objet.Description
         };
-        console.log("entré 2");
     } else if (objet.Stackable == true && typeof rolistes[joueurNom].Inv[nomObjet] !== "undefined"){
         rolistes[joueurNom].Inv[nomObjet] += objet.Quantity;
-        console.log("entré 3");
     } else{
-        console.log("entré 4");
         rolistes[joueurNom].Inv[nomObjet] += {
             Nom:objet.Nom,
             Quantity:objet.Quantity,
@@ -45,9 +37,58 @@ function AddInventory(rolistes,boutique,nomObjet,joueurNom){
             Weight:objet.Weight,
             Description:objet.Description
         };
-        console.log("entré 4");
     }
     return rolistes;
 }
 
+function AddWeapon({rolistes,objet,slot = "Principale"}){
+    if(objet.Hand == 2)
+    {
+        oldWeapon = [rolistes.Weapons["Principale"],rolistes.Weapons["Auxiliaire"]];
+        rolistes.Weapons["Principale"] = {
+            Nom: objet.Nom,
+            Type: objet.Type,
+            Hand: objet.Hand,
+            Weight: objet.Weight,
+            Damage: objet.Damage,
+            Precision: objet.Precision,
+            Munition: objet.Munition,
+            Effects: objet.Effects
+        };
+        delete rolistes.Weapons["Auxiliaire"];
+    }
+    else if(objet.Hand == 1)
+    {
+        if(rolistes.Weapons["Principale"].Hand == 2)
+        {
+            oldWeapon = [rolistes.Weapons["Principale"]];
+            rolistes.Weapons["Principale"] = {
+                Nom: objet.Nom,
+                Type: objet.Type,
+                Hand: objet.Hand,
+                Weight: objet.Weight,
+                Damage: objet.Damage,
+                Precision: objet.Precision,
+                Munition: objet.Munition,
+                Effects: objet.Effects
+            }
+        }
+        else {
+            oldWeapon = [rolistes.Weapons[slot]];
+            rolistes.Weapons[slot] = {
+                Nom: objet.Nom,
+                Type: objet.Type,
+                Hand: objet.Hand,
+                Weight: objet.Weight,
+                Damage: objet.Damage,
+                Precision: objet.Precision,
+                Munition: objet.Munition,
+                Effects: objet.Effects
+            }
+        }
+    }
+    return [rolistes,oldWeapon];
+}
+
 exports.AddInventory = AddInventory;
+exports.AddWeapon = AddWeapon;

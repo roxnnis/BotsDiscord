@@ -89,6 +89,8 @@ module.exports = {
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom du Joueur").setRequired(true))
 						.addStringOption((option) => option.setName("arme").setDescription("Nom de l'arme").setRequired(true))
+						.addStringOption((option) => option.setName("slot").setDescription("Emplacement de l'arme").setRequired(false)
+						.addChoice("Main principale","Principale").addChoice("Main secondaire","Auxiliaire"))
 				)
 		)
 		.addSubcommandGroup(subcommandgroup =>
@@ -200,7 +202,7 @@ module.exports = {
 						else {
 							if (rolistes[joueurNom].Money >= (boutique.shop.ShopObjet[nomObjet].Prix * qtt)){
 								for(i=0;i<qtt;i++){
-									rolistes = AdIn.AddInventory(rolistes,boutique,nomObjet,joueurNom);
+									rolistes = AdIn.AddInventory(rolistes,boutique.shop.ShopObjet[nomObjet].Objet,joueurNom);
 								}
 								rolistes[joueurNom].Money -= boutique.shop.ShopObjet[nomObjet].Prix * qtt;
 								fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
@@ -281,6 +283,42 @@ module.exports = {
 						fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 						await interaction.reply("Effet ajouté");
 					}
+				}
+				else if(interaction.options._subcommand == "buy"){
+					nomObjet = interaction.options.getString("arme");
+					joueurNom = interaction.options.getString("nom");
+					try {
+						if (typeof boutique.shop.ShopArmes[nomObjet] === "undefined") throw "No Item";
+						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else {
+							if (rolistes[joueurNom].Money >= boutique.shop.ShopArmes[nomObjet].Prix){
+								var weaponTempo = AdIn.AddWeapon({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmes[nomObjet].Objet,slot : isNull(interaction.options.getString("slot"),"Principale")});
+								rolistes[joueurNom] = weaponTempo[0];
+								rolistes[joueurNom].Money -= boutique.shop.ShopArmes[nomObjet].Prix;
+								
+								for(var i in weaponTempo[1])
+								{
+									if(typeof boutique.shop.ShopArmes[weaponTempo[1][i].Nom] !== "undefined")
+									{
+										rolistes[joueurNom].Money += boutique.shop.ShopArmes[weaponTempo[1][i].Nom].Prix /2;									
+									}
+								}
+								fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+								await interaction.reply({ content: joueurNom + " à acheter " + nomObjet, ephemeral : true});
+							}
+							else{
+								await interaction.reply({ content: "Forgerons: Tu n'as pas assez d'argent pour acheter ce petit bijoux, reviens après quelque mission", ephemeral : true});
+							}
+						}
+					} catch(err){
+						if(err == "No Item"){
+							await interaction.reply({ content: "Forgerons: J'ai pas ça dans mes petites merveilles", ephemeral : true});
+						}
+						else if(err == "No player"){
+							await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral : true});
+						}
+					}
+
 				}
 			}
 			else if (interaction.options._group == "armure") {

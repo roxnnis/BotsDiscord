@@ -37,9 +37,6 @@ const bot = new Client({
 	],
 });
 
-//Autorisation (Pourri AF)
-// const permissions = [{id: '185352234580574208',type: 'USER',permission: true,},{id: '659767673898663948',type: 'ROLE',permission: false}];
-
 //Intégrer les commandes
 bot.commands = new Collection();
 const commandFiles = fs

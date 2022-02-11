@@ -78,17 +78,18 @@ function PersoInfo(rolistes) {
 
 	//Effets ?
 	if (
-		typeof rolistes[NomDonne].Weapons.Principale.Effects !== "undefined"
+		typeof rolistes[NomDonne].Weapons.Principale.Effects !== "undefined" && Object.keys(rolistes[NomDonne].Weapons.Principale.Effects).length != 0
 	) {
 		EmbArmes += "\r\nEffet(s) : ";
+		for (var key in rolistes[NomDonne].Weapons.Principale.Effects) {
+			EmbArmes +=
+				"\r\n> " +
+				key +
+				" : " +
+				rolistes[NomDonne].Weapons.Principale.Effects[key];
+		}
 	}
-	for (var key in rolistes[NomDonne].Weapons.Principale.Effects) {
-		EmbArmes +=
-			"\r\n> " +
-			key +
-			" : " +
-			rolistes[NomDonne].Weapons.Principale.Effects[key];
-	}
+	
 
 	if (typeof rolistes[NomDonne].Weapons.Auxiliaire !== "undefined") {
 		//Auxiliaire
@@ -147,7 +148,7 @@ function PersoInfo(rolistes) {
 		rolistes[NomDonne].Armors.Principale.Res.MEN;
 
 	//Résistances autres ?
-	if (typeof rolistes[NomDonne].Armors.Principale.Res.OTHERS["None"] === "undefined") {
+	if (typeof rolistes[NomDonne].Armors.Principale.Res.OTHERS !== "undefined") {
 		for (var key in rolistes[NomDonne].Armors.Principale.Res.OTHERS)
 			EmbArmures += "\r\n> " + key + " : " + rolistes[NomDonne].Armors.Principale.Res.OTHERS[key].toString()
 	}

@@ -364,6 +364,38 @@ module.exports = {
 						await interaction.reply("Effet ajouté");
 					}
 				}
+				else if(interaction.options._subcommand == "buy"){
+					nomObjet = interaction.options.getString("armure");
+					joueurNom = interaction.options.getString("nom");
+					try {
+						if (typeof boutique.shop.ShopArmures[nomObjet] === "undefined") throw "No Item";
+						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else {
+							if (rolistes[joueurNom].Money >= boutique.shop.ShopArmures[nomObjet].Prix){
+								var weaponTempo = AdIn.AddArmor({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmures[nomObjet].Objet});
+								rolistes[joueurNom] = weaponTempo[0];
+								rolistes[joueurNom].Money -= boutique.shop.ShopArmures[nomObjet].Prix;
+								
+								if(typeof boutique.shop.ShopArmures[weaponTempo[1][0].Nom] !== "undefined")
+								{
+									rolistes[joueurNom].Money += boutique.shop.ShopArmures[weaponTempo[1][0].Nom].Prix /2;									
+								}
+								fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+								await interaction.reply({ content: joueurNom + " à acheter " + nomObjet, ephemeral : true});
+							}
+							else{
+								await interaction.reply({ content: "Armurier: Tu n'as pas assez d'argent pour acheter ce petit bijoux, reviens après quelque mission", ephemeral : true});
+							}
+						}
+					} catch(err){
+						if(err == "No Item"){
+							await interaction.reply({ content: "Armurier: J'ai pas ça dans mes petites merveilles", ephemeral : true});
+						}
+						else if(err == "No player"){
+							await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral : true});
+						}
+					}
+				}
 			}
 		}
 

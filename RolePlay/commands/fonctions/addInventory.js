@@ -90,5 +90,18 @@ function AddWeapon({rolistes,objet,slot = "Principale"}){
     return [rolistes,oldWeapon];
 }
 
+function AddArmor({rolistes,objet}){
+    oldWeapon = [rolistes.Armors.Principale];
+    rolistes.Armors["Principale"] = {
+        Nom: objet.Nom,
+        Type: objet.Type,
+        Weight: objet.Weight,
+        Res: objet.Res,
+        Effects: objet.Effects
+    };
+    return [rolistes,oldWeapon];
+}
+
 exports.AddInventory = AddInventory;
 exports.AddWeapon = AddWeapon;
+exports.AddArmor = AddArmor;

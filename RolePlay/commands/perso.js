@@ -56,13 +56,13 @@ module.exports = {
 			}
 			//AJOUTER UN PERSONNAGE
 			else if (interaction.options._subcommand == "add") {
-				// if (interaction.user.id == "185352234580574208") {
+				if (interaction.user.id == "185352234580574208") {
 					//Ajout
 					PAdd.PersoAdd(rolistes, interaction);
 					await interaction.reply("Votre personnage vient d'être créé.");
-				// } else {
-					// await interaction.reply({ content: "Vous n'avez pas les droits d'ajouter un personnage.", ephemeral: true });
-				// }
+				} else {
+					await interaction.reply({ content: "Vous n'avez pas les droits d'ajouter un personnage.", ephemeral: true });
+				}
 			}
 			//CHANGER LE DCM
 			else if (interaction.options._subcommand == "dcm" && interaction.user.id == "185352234580574208") {

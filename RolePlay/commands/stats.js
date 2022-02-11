@@ -8,7 +8,7 @@ module.exports = {
 data: new SlashCommandBuilder()
 		//Commande principale STATS
 		.setName("stats")
-		.setDescription("Modifier une statistique")
+		.setDescription("Admin : Modifier une statistique")
 
 		//Stats >> PV
 		.addIntegerOption((option) => option.setName("pv").setDescription("Modifier le nombre de point de vie d'un personnage").setRequired(true))

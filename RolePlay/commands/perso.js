@@ -1,6 +1,7 @@
 //Requires
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const fs = require("fs");
+
 const PInf = require(`${process.cwd()}/commands/fonctions/personnageInfo.js`);
 const PAdd = require(`${process.cwd()}/commands/fonctions/personnageAdd.js`);
 
@@ -23,7 +24,7 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName("add")
-				.setDescription("Créer un personnage")
+				.setDescription("Admin : Créer un personnage")
 				//Perso >> Add >> Options
 				.addUserOption((option) => option.setName("usr").setDescription("Utilisateur possédant le personnage").setRequired(true))
 				.addStringOption((option) => option.setName("nom").setDescription("Nom du personnage").setRequired(true))
@@ -36,7 +37,7 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName("dcm")
-				.setDescription("Changer le DCM d'un joueur")
+				.setDescription("Admin : Changer le DCM d'un joueur")
 				//Perso >> dcm >> Options
 				.addStringOption((option) => option.setName("nom").setDescription("Nom du personnage").setRequired(true))
 				.addStringOption((option) => option.setName("dcm").setDescription("Nom du nouveau DCM").setRequired(true))
@@ -45,8 +46,7 @@ module.exports = {
 		),
 	async execute(interaction) {
 
-		var Pers = fs.readFileSync("./donnees/Personnages.json");
-		var rolistes = JSON.parse(Pers);
+		var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
 
 		//INFORMATIONS DU PERSONNAGE
 		if (interaction.options._subcommand == "info") {
@@ -55,7 +55,7 @@ module.exports = {
 		}
 		//AJOUTER UN PERSONNAGE
 		else if (interaction.options._subcommand == "add") {
-			if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+			if (interaction.user.id == "185352234580574208") {
 				//Ajout
 				PAdd.PersoAdd(rolistes, interaction);
 				await interaction.reply("Votre personnage vient d'être créé.");
@@ -65,11 +65,15 @@ module.exports = {
 			}
 		}
 		//CHANGER LE DCM
-		else if (interaction.options._subcommand == "dcm" && interaction.user.id == "185352234580574208") {
+		else if (interaction.options._subcommand == "dcm") {
+			if (interaction.user.id == "185352234580574208") {
 			NomDonne = interaction.options.getString("nom"); //Requête par nom
 			rolistes[NomDonne].Dcm = interaction.options.getString("dcm");
 			fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
 			await interaction.reply("Votre DCM vient d'être modifié.");
+			} else {
+				await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
+			}
 			//Personnage dcm set
 		} else {
 			await interaction.reply({

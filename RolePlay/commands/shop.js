@@ -18,7 +18,7 @@ module.exports = {
 				.addSubcommand(subcommand =>
 					subcommand
 						.setName("add")
-						.setDescription("Ajoute un objet")
+						.setDescription("Admin : Ajoute un objet")
 						// shop >> item >> add >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'objet").setRequired(true))
 						.addIntegerOption((option) => option.setName("pods").setDescription("Poid de L'objet dans l'inventaire").setRequired(true))
@@ -55,7 +55,7 @@ module.exports = {
 				.addSubcommand(subcommand =>
 					subcommand
 						.setName("add")
-						.setDescription("Ajoute une arme")
+						.setDescription("Admin : Ajoute une arme")
 						// shop >> item >> add >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme").setRequired(true))
 						.addStringOption((option) => option.setName("type").setDescription("Type de l'arme").setRequired(true))
@@ -75,7 +75,7 @@ module.exports = {
 				.addSubcommand(subcommand =>
 					subcommand
 						.setName("effect")
-						.setDescription("Ajouter un effet à une arme")
+						.setDescription("Admin : Ajouter un effet à une arme")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'arme qui va recevoir l'effet").setRequired(true))
 						.addStringOption((option) => option.setName("efct").setDescription("Nom de l'effet").setRequired(true))
@@ -98,7 +98,7 @@ module.exports = {
 				.addSubcommand(subcommand =>
 					subcommand
 						.setName("add")
-						.setDescription("Ajoute une armure")
+						.setDescription("Admin : Ajoute une armure")
 						// shop >> item >> add >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'armure").setRequired(true))
 						.addStringOption((option) => option.setName("type").setDescription("Type de l'armure").setRequired(true))
@@ -117,7 +117,7 @@ module.exports = {
 				.addSubcommand(subcommand =>
 					subcommand
 						.setName("effect")
-						.setDescription("Ajouter un effet à une armure")
+						.setDescription("Admin : Ajouter un effet à une armure")
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom de l'armure qui va recevoir l'effet").setRequired(true))
 						.addStringOption((option) => option.setName("efct").setDescription("Nom de l'effet").setRequired(true))

@@ -9,13 +9,10 @@
 //Salons Autorisés
 	const salonJDR = ["624474305018855449","924276882898321449"];
 
+//
+
 //Récupérer les classes
 const { Personnages } = require(`./classes/Personnages`);
-
-
-//Paramètre de test --------------------------------
-var Dexhort = new Personnages({Nom: "MJ",LVL: 96});
-//--------------------------------------------------
 
 
 //Rolistes (Registre de personnages)

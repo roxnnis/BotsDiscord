@@ -46,7 +46,7 @@ module.exports = {
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom du Joueur").setRequired(true))
 						.addStringOption((option) => option.setName("item").setDescription("Nom de l'objet").setRequired(true))
-						.addStringOption((option) => option.setName("qtty").setDescription("Quantité acheté").setRequired(false))
+						.addIntegerOption((option) => option.setName("qtty").setDescription("Quantité acheté").setRequired(false))
 				)
 		)
 		.addSubcommandGroup(subcommandgroup =>
@@ -429,46 +429,6 @@ module.exports = {
                 }
 			}
 		}
-		else if (interaction.options._group == "armure") {
-			//Shop >> Item >> Add >> options
-			if (interaction.options._subcommand == "add") {
-				var tempo = {
-					Objet: {
-						Nom: interaction.options.getString("nom"),
-						Type: interaction.options.getString("type"),
-						Weight: interaction.options.getInteger("pods"),
-						Res: { PHY: interaction.options.getInteger("rphy"), MEN: interaction.options.getInteger("rmen") },
-						Effects: {}
-					},
-					Prix: interaction.options.getInteger("prix")
-				};
 
-				boutique.shop["ShopArmures"][tempo.Objet.Nom] = {
-					Objet: tempo.Objet,
-					Prix: tempo.Prix
-				}
-
-				fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-				await interaction.reply("Armure créé");
-			}
-			else if (interaction.options._subcommand == "list") {
-				if (interaction.options.getString("nom").toLowerCase() == "all") {
-					await interaction.reply({ embeds: [Spl.ShopListArmure(boutique, "all")] });
-				}
-				else {
-					await interaction.reply({ embeds: [Spl.ShopListArmure(boutique, interaction.options.getString("nom"))] });
-				}
-			}
-			else if (interaction.options._subcommand == "effect") {
-				if (typeof boutique.shop.ShopArmures[interaction.options.getString("nom")] === "undefined") {
-					await interaction.reply("L'objet n'existe pas");
-				}
-				else {
-					boutique.shop.ShopArmures[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
-					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-					await interaction.reply("Effet ajouté");
-				}
-			}
-		}
 	}
 }

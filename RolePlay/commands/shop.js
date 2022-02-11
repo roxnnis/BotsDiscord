@@ -1,6 +1,5 @@
+//Requires
 const { SlashCommandBuilder } = require("@discordjs/builders");
-
-//Personnages
 const fs = require("fs");
 const Spl = require("./fonctions/shopList.js");
 const AdIn = require("./fonctions/addInventory.js");

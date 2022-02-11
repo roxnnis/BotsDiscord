@@ -1,6 +1,5 @@
+//Requires
 const { SlashCommandBuilder } = require("@discordjs/builders");
-
-//Personnages
 const fs = require("fs");
 const PInf = require("./fonctions/personnageInfo.js");
 const PAdd = require("./fonctions/personnageAdd.js");
@@ -17,6 +16,11 @@ data: new SlashCommandBuilder()
 		), async execute(interaction){
 			if (interaction.commandName == "stats") {
 				await interaction.reply("La statistique vient d'être modifiée.");
+			} else {
+				await interaction.reply({
+					content: "La commande n'a pas aboutie.",
+					ephemeral: true,
+				});
 			}
 		}
 }

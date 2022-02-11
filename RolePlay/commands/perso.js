@@ -1,6 +1,5 @@
+//Requires
 const { SlashCommandBuilder } = require("@discordjs/builders");
-
-//Personnages
 const fs = require("fs");
 const PInf = require(`${process.cwd()}/commands/fonctions/personnageInfo.js`);
 const PAdd = require(`${process.cwd()}/commands/fonctions/personnageAdd.js`);

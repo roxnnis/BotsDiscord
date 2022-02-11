@@ -209,6 +209,7 @@ module.exports = {
 					try {
 						if (typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
 						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else if (!boutique.shop.ShopObjet[nomObjet].Visible) throw "No Item";
 						else {
 							if (rolistes[joueurNom].Money >= (boutique.shop.ShopObjet[nomObjet].Prix * qtt)){
 								for(i=0;i<qtt;i++){
@@ -304,6 +305,7 @@ module.exports = {
 					try {
 						if (typeof boutique.shop.ShopArmes[nomObjet] === "undefined") throw "No Item";
 						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else if (!boutique.shop.ShopArmes[nomObjet].Visible) throw "No Item";
 						else {
 							if (rolistes[joueurNom].Money >= boutique.shop.ShopArmes[nomObjet].Prix){
 								var weaponTempo = AdIn.AddWeapon({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmes[nomObjet].Objet,slot : isNull(interaction.options.getString("slot"),"Principale")});
@@ -388,6 +390,7 @@ module.exports = {
 					try {
 						if (typeof boutique.shop.ShopArmures[nomObjet] === "undefined") throw "No Item";
 						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else if (!boutique.shop.ShopArmures[nomObjet].Visible) throw "No Item";
 						else {
 							if (rolistes[joueurNom].Money >= boutique.shop.ShopArmures[nomObjet].Prix){
 								var weaponTempo = AdIn.AddArmor({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmures[nomObjet].Objet});
@@ -402,12 +405,12 @@ module.exports = {
 								await interaction.reply({ content: joueurNom + " à acheter " + nomObjet, ephemeral : true});
 							}
 							else{
-								await interaction.reply({ content: "Armurier: Tu n'as pas assez d'argent pour acheter ce petit bijoux, reviens après quelque mission", ephemeral : true});
+								await interaction.reply({ content: "Armurier: \r\n\nTu n'as pas assez d'argent pour acheter ce petit bijoux, reviens après quelque mission", ephemeral : true});
 							}
 						}
 					} catch(err){
 						if(err == "No Item"){
-							await interaction.reply({ content: "Armurier: J'ai pas ça dans mes petites merveilles", ephemeral : true});
+							await interaction.reply({ content: "Armurier: \r\n\nJ'ai pas ça dans mes petites merveilles", ephemeral : true});
 						}
 						else if(err == "No player"){
 							await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral : true});

@@ -806,7 +806,7 @@ class Personnage {
 				Description:objet.Description
 			});
 		}
-	} 
+	}
 	//DCM
 	get Dcm() {
 		return this.#DCM;
@@ -821,6 +821,11 @@ class Personnage {
 				console.log("Demandé : string || Donné :", typeof newDCM);
 			}
 		}
+	}
+
+	AddItemInInventory(objet, qtt)
+	{
+
 	}
 	//#endregion
 }
@@ -922,28 +927,6 @@ class Shop {
 		Penser à ajouter un moyen d'afficher le shop :eyes:
 		Penser à ajouter un moyen d'afficher le shop :eyes:
 	*/
-	BuyItem(rolistes, joueurNom, nomObjet, qtt=1) {
-		try {
-			if (typeof this.#CONSOMMABLES[nomObjet] === "undefined") throw "No Item";
-			else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
-			else {
-				if (rolistes[joueurNom].Money >= (this.#CONSOMMABLES[nomObjet].Prix * qtt)){
-					for(i=0;i<qtt;i++){rolistes[joueurNom].Inv = this.#CONSOMMABLES[nomObjet];}
-					return joueurNom + " à acheter " + qtt + " " + nomObjet;
-				}
-				else{
-					return "Le joueur " + joueurNom + " n'a pas assez d'argent pour acheter " + nomObjet;
-				}
-			}
-		} catch(err){
-			if(err == "No Item"){
-				return "Il n'y a pas d'item de ce nom dans le shop";
-			}
-			else if(err == "No player"){
-				return "Il n'y a pas de joueur de ce nom";
-			}
-		}
-	}
 	// Armures achat
 
 	//#endregion

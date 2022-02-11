@@ -1,5 +1,3 @@
-const Classes = require("../../classes.js");
-
 function AddInventory(rolistes,boutique,nomObjet,joueurNom){
     objet = boutique.shop.ShopObjet[nomObjet].Objet;
     console.log(objet);

@@ -1,69 +1,33 @@
-// BOT CONFIGURATION
-// Contient le Jeton d'activation du Bot Discord.
-const fs = require("fs");
-const S = fs.readFileSync("../BotConfig.json");
-var SettBot = JSON.parse(S);
-
 //Requires
-const Classes = require("./classes.js");
-const Shop = require("./shop.js");
+	//File Search
+	const fs = require("fs");
 
-//SALON JDR
-const salonJDR = ["624474305018855449","924276882898321449"];
+//Lancement du bot
+	const Discord = require(`./bot/setup.js`);
+	var bot = Discord.botCreate(JSON.parse(fs.readFileSync(`./bot/BotConfig.json`)).Token);
 
-//#region Création de personnages
+//Salons Autorisés
+	const salonJDR = ["624474305018855449","924276882898321449"];
 
-//Persos
-Dexhort = new Classes.Personnage({Nom: "MJ",LVL: 96});
+//Récupérer les classes
+const { Personnages } = require(`./classes/Personnages`);
 
-//JSON lecture
-const Pers = fs.readFileSync("./Personnages.json");
-var rolistes = JSON.parse(Pers);
 
-//Écriture dans JSON
-fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
+//Paramètre de test --------------------------------
+var Dexhort = new Personnages({Nom: "MJ",LVL: 96});
+//--------------------------------------------------
 
-//#endregion
 
-//#region Déclaration du bot
-const { Client, Intents, Collection, MessageEmbed } = require("discord.js");
-const bot = new Client({
-	intents: [
-		Intents.FLAGS.GUILDS,
-		Intents.FLAGS.GUILD_MESSAGES,
-		Intents.FLAGS.GUILD_MEMBERS,
-		Intents.FLAGS.GUILD_PRESENCES,
-		Intents.FLAGS.DIRECT_MESSAGES,
-	],
-});
+//Rolistes (Registre de personnages)
+var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
+console.log("23Main - ", rolistes);
 
-//Autorisation (Pourri AF)
-// const permissions = [{id: '185352234580574208',type: 'USER',permission: true,},{id: '659767673898663948',type: 'ROLE',permission: false}];
+//Écriture dans le JSON
+fs.writeFileSync(`./donnees/Personnages.json`, JSON.stringify(rolistes));
 
-//Intégrer les commandes
-bot.commands = new Collection();
-const commandFiles = fs
-	.readdirSync("./commands")
-	.filter((file) => file.endsWith(".js"));
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	// Set a new item in the Collection
-	// With the key as the command name and the value as the exported module
-	bot.commands.set(command.data.name, command);
-}
 
-//Connexion du Bot
-bot.login(SettBot.Token);
-//#endregion
 
-//Update des slash commands
-const COMMANDES_BOT = require("./slash.js");
-bot.on('ready', () => {
-	console.log("Je suis opérationnel ! (Assist-o-bot, pas Roxnnis hein...)");
-	COMMANDES_BOT.slash();
-})
-
-//#region Commandes du Bot
+//
 bot.on("interactionCreate", async (interaction) => {
 
 	if (!interaction.isCommand() || !salonJDR.includes(interaction.channelId))
@@ -97,4 +61,3 @@ bot.on("interactionCreate", async (interaction) => {
 		}
 	}
 });
-//#endregion

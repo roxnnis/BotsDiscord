@@ -1,13 +1,9 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
 
 //Personnages
 const fs = require("fs");
-var Pers = fs.readFileSync("./Personnages.json");
-const Classes = require("../classes.js");
 const Spl = require("./fonctions/shopList.js");
 const AdIn = require("./fonctions/addInventory.js");
-
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -141,10 +137,10 @@ module.exports = {
 	,
 	async execute(interaction) {
 		if (interaction.commandName == "shop") {
-			var shp = fs.readFileSync("Shop.json");
+			var shp = fs.readFileSync("./donnees/Shop.json");
 			var boutique = JSON.parse(shp);
 
-			var pers = fs.readFileSync("Personnages.json");
+			var pers = fs.readFileSync("./donnees/Personnages.json");
 			var rolistes = JSON.parse(pers);
 
 			//Tester si le paramètre est donné ou non
@@ -179,7 +175,7 @@ module.exports = {
 						Prix: tempo.Prix
 					}
 					
-					fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 					await interaction.reply("Item créé");
 				}
 				//Shop >> Item >> List >> options
@@ -207,7 +203,7 @@ module.exports = {
 									rolistes = AdIn.AddInventory(rolistes,boutique,nomObjet,joueurNom);
 								}
 								rolistes[joueurNom].Money -= boutique.shop.ShopObjet[nomObjet].Prix * qtt;
-								fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
+								fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
 								await interaction.reply({ content: joueurNom + " à acheter " + qtt + " " + nomObjet, ephemeral : true});
 							}
 							else{
@@ -263,7 +259,7 @@ module.exports = {
 						Prix: tempo.Prix
 					}
 					
-					fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 					await interaction.reply("Arme créé");
 				}
 				else if(interaction.options._subcommand == "list"){
@@ -282,7 +278,7 @@ module.exports = {
 					}
 					else{
 						boutique.shop.ShopArmes[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
-						fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+						fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 						await interaction.reply("Effet ajouté");
 					}
 				}
@@ -307,7 +303,7 @@ module.exports = {
 						Prix: tempo.Prix
 					}
 					
-					fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 					await interaction.reply("Armure créé");
 				}
 				else if(interaction.options._subcommand == "list"){
@@ -326,7 +322,7 @@ module.exports = {
 					}
 					else{
 						boutique.shop.ShopArmures[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
-						fs.writeFileSync("Shop.json", JSON.stringify(boutique));
+						fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
 						await interaction.reply("Effet ajouté");
 					}
 				}

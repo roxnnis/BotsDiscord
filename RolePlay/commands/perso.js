@@ -2,9 +2,8 @@ const { SlashCommandBuilder } = require("@discordjs/builders");
 
 //Personnages
 const fs = require("fs");
-var Pers = fs.readFileSync("./Personnages.json");
-const PInf = require("./fonctions/personnageInfo.js");
-const PAdd = require("./fonctions/personnageAdd.js");
+const PInf = require(`${process.cwd()}/commands/fonctions/personnageInfo.js`);
+const PAdd = require(`${process.cwd()}/commands/fonctions/personnageAdd.js`);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -47,7 +46,7 @@ module.exports = {
 	async execute(interaction) {
 
 		if (interaction.commandName == "personnage") {
-			var Pers = fs.readFileSync("Personnages.json");
+			var Pers = fs.readFileSync("./donnees/Personnages.json");
 			var rolistes = JSON.parse(Pers);
 
 			//INFORMATIONS DU PERSONNAGE
@@ -58,6 +57,7 @@ module.exports = {
 			//AJOUTER UN PERSONNAGE
 			else if (interaction.options._subcommand == "add") {
 				if (interaction.user.id == "185352234580574208") {
+					//Ajout
 					PAdd.PersoAdd(rolistes, interaction);
 					await interaction.reply("Votre personnage vient d'être créé.");
 				} else {
@@ -66,9 +66,9 @@ module.exports = {
 			}
 			//CHANGER LE DCM
 			else if (interaction.options._subcommand == "dcm" && interaction.user.id == "185352234580574208") {
-				NomDonne = interaction.options.getString("nom");
+				NomDonne = interaction.options.getString("nom"); //Requête par nom
 				rolistes[NomDonne].Dcm = interaction.options.getString("dcm");
-				fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
+				fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
 				await interaction.reply("Votre DCM vient d'être modifié.");
 				//Personnage dcm set
 			} else {

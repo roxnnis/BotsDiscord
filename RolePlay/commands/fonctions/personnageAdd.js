@@ -1,12 +1,20 @@
-const Classes = require("../../classes.js");
-//C:/Users/User/Documents/Bot Discord/BotsDiscord/RolePlay/
+//File Search
 const fs = require("fs");
 
+//Récupérer les classes
+const { Personnages } = require(`../../classes/Personnages`);
+const { Stats } = require("../../classes/Stats");
+
+/**
+ * Ajoute un personnage dans le registre.
+ * @param rolistes : Dictionnaire contenant tous les personnages (Disparition prochaine...)
+ * @param interaction : Commande slash dont on récupère les informations
+ */
 function PersoAdd(rolistes, interaction){
 
-	tempo = new Classes.Personnage({
+	tempo = new Personnages({
 		Nom: interaction.options.getString("nom"),
-		Stats: new Classes.Stats(
+		Stats: new Stats(
 			{
 				phy: interaction.options.getInteger("phy"),
 				men: interaction.options.getInteger("men"),
@@ -30,7 +38,7 @@ function PersoAdd(rolistes, interaction){
 		Dcm: tempo.Dcm
 	};
 
-	fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
+	fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
 }
 
 exports.PersoAdd = PersoAdd;

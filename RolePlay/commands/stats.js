@@ -14,13 +14,7 @@ data: new SlashCommandBuilder()
 		.addIntegerOption((option) => option.setName("pv").setDescription("Modifier le nombre de point de vie d'un personnage").setRequired(true))
 		.addStringOption((option) => option.setName("nom").setDescription("Cible de la modification").setRequired(true)
 		), async execute(interaction){
-			if (interaction.commandName == "stats") {
-				await interaction.reply("La statistique vient d'être modifiée.");
-			} else {
-				await interaction.reply({
-					content: "La commande n'a pas aboutie.",
-					ephemeral: true,
-				});
-			}
+			
+			await interaction.reply({content:"La commande n'est pas encore disponible",ephemeral:true});
 		}
 }

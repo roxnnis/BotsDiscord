@@ -25,6 +25,7 @@ module.exports = {
 				.setName("add")
 				.setDescription("Créer un personnage")
 				//Perso >> Add >> Options
+				.addUserOption((option) => option.setName("usr").setDescription("Utilisateur possédant le personnage").setRequired(true))
 				.addStringOption((option) => option.setName("nom").setDescription("Nom du personnage").setRequired(true))
 				.addIntegerOption((option) => option.setName("phy").setDescription("Physique du personnage").setRequired(true))
 				.addIntegerOption((option) => option.setName("men").setDescription("Mental du personnage").setRequired(true))
@@ -44,38 +45,37 @@ module.exports = {
 		),
 	async execute(interaction) {
 
-		if (interaction.commandName == "personnage") {
-			var Pers = fs.readFileSync("./donnees/Personnages.json");
-			var rolistes = JSON.parse(Pers);
+		var Pers = fs.readFileSync("./donnees/Personnages.json");
+		var rolistes = JSON.parse(Pers);
 
-			//INFORMATIONS DU PERSONNAGE
-			if (interaction.options._subcommand == "info") {
-				NomDonne = interaction.options.getString("nom"); //Requête par nom
-				await interaction.reply({ embeds: [PInf.PersoInfo(rolistes)] });
-			}
-			//AJOUTER UN PERSONNAGE
-			else if (interaction.options._subcommand == "add") {
-				if (interaction.user.id == "185352234580574208") {
-					//Ajout
-					PAdd.PersoAdd(rolistes, interaction);
-					await interaction.reply("Votre personnage vient d'être créé.");
-				} else {
-					await interaction.reply({ content: "Vous n'avez pas les droits d'ajouter un personnage.", ephemeral: true });
-				}
-			}
-			//CHANGER LE DCM
-			else if (interaction.options._subcommand == "dcm" && interaction.user.id == "185352234580574208") {
-				NomDonne = interaction.options.getString("nom"); //Requête par nom
-				rolistes[NomDonne].Dcm = interaction.options.getString("dcm");
-				fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-				await interaction.reply("Votre DCM vient d'être modifié.");
-				//Personnage dcm set
+		//INFORMATIONS DU PERSONNAGE
+		if (interaction.options._subcommand == "info") {
+			NomDonne = interaction.options.getString("nom"); //Requête par nom
+			await interaction.reply({ embeds: [PInf.PersoInfo(rolistes)] });
+		}
+		//AJOUTER UN PERSONNAGE
+		else if (interaction.options._subcommand == "add") {
+			if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+				//Ajout
+				PAdd.PersoAdd(rolistes, interaction);
+				await interaction.reply("Votre personnage vient d'être créé.");
 			} else {
-				await interaction.reply({
-					content: "La commande n'a pas aboutie.",
-					ephemeral: true,
-				});
+				await interaction.reply("Vous n'avez pas les droits pour créer un personnage.");
+
 			}
+		}
+		//CHANGER LE DCM
+		else if (interaction.options._subcommand == "dcm" && interaction.user.id == "185352234580574208") {
+			NomDonne = interaction.options.getString("nom"); //Requête par nom
+			rolistes[NomDonne].Dcm = interaction.options.getString("dcm");
+			fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+			await interaction.reply("Votre DCM vient d'être modifié.");
+			//Personnage dcm set
+		} else {
+			await interaction.reply({
+				content: "La commande n'a pas aboutie.",
+				ephemeral: true,
+			});
 		}
 	}
 };

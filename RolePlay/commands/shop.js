@@ -146,133 +146,103 @@ module.exports = {
 
 		var shp = fs.readFileSync("./donnees/Shop.json");
 		var boutique = JSON.parse(shp);
-
-		var pers = fs.readFileSync("./donnees/Personnages.json");
+    
+    	var pers = fs.readFileSync("./donnees/Personnages.json");
 		var rolistes = JSON.parse(pers);
-
-		//Tester si le paramètre est donné ou non
-		function isNull(input, out) {
-			return input != null ? input : out;
-		}
-		//Shop >> Item
-		if (interaction.options._group == "item") {
-			//Shop >> Item >> Add >> options
-			if (interaction.options._subcommand == "add") {
-				var tempo = {
-					Objet: {
-						Nom: interaction.options.getString("nom"),
-						Weight: interaction.options.getInteger("pods"),
-						Quantity: isNull(interaction.options.getInteger("qtty"), 1),
-						Stackable: isNull(interaction.options.getBoolean("stac"), false)
-					},
-					Prix: interaction.options.getInteger("prix")
-				};
-				if (isNull(interaction.options.getInteger("rest"), false)) {
-					tempo.Objet["Remain"] = interaction.options.getInteger("rest");
-					if (isNull(interaction.options.getString("unit"), false)) {
-						tempo.Objet["Unity"] = interaction.options.getString("unit");
+    
+    //Tester si le paramètre est donné ou non
+			function isNull(input, out) {
+				return input != null ? input : out;
+			}
+			
+			//Shop >> Item
+			if (interaction.options._group == "item") {
+				//Shop >> Item >> Add >> options
+				if(interaction.options._subcommand == "add")
+				{
+					var tempo = {
+						Objet: {
+							Nom: interaction.options.getString("nom"),
+							Weight: interaction.options.getInteger("pods"),
+							Quantity: isNull(interaction.options.getInteger("qtty"), 1),
+							Stackable: isNull(interaction.options.getBoolean("stac"), false)
+						},
+						Prix: interaction.options.getInteger("prix"),
+						Visible: interaction.options.getBoolean("visi")
+					};
+					if(isNull(interaction.options.getInteger("rest"),false))
+					{
+						tempo.Objet["Remain"] = interaction.options.getInteger("rest");
+						if(isNull(interaction.options.getString("unit"),false))
+						{
+							tempo.Objet["Unity"] = interaction.options.getString("unit");
+						}
 					}
-				}
 
-				boutique.shop["ShopObjet"][tempo.Objet.Nom] = {
-					Objet: tempo.Objet,
-					Prix: tempo.Prix
+					boutique.shop["ShopObjet"][tempo.Objet.Nom] = {
+						Objet: tempo.Objet,
+						Prix: tempo.Prix,
+						Visible: tempo.Visible
+					}
+                    fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
+                    await interaction.reply("Item créé");
+			    }
+        
+                 //Shop >> Item >> List >> options
+			    else if(interaction.options._subcommand == "list"){
+					var mssProperty = {message : "Rien a dire", privee : true};
+					if(interaction.options.getString("nom").toLowerCase() == "all")
+					{
+						mssProperty = Spl.ShopListObjet(boutique,"all",rolistes[interaction.options.getString("joueur")]);
+					}
+					else{
+						mssProperty = Spl.ShopListObjet(boutique,interaction.options.getString("nom"),rolistes[interaction.options.getString("joueur")]);
+					}
+					await interaction.reply({embeds: [mssProperty.message], ephemeral: mssProperty.privee});
 				}
-
-				fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-				await interaction.reply("Item créé");
-			}
-			//Shop >> Item >> List >> options
-			else if (interaction.options._subcommand == "list") {
-				if (interaction.options.getString("nom").toLowerCase() == "all") {
-					await interaction.reply({ embeds: [Spl.ShopListObjet(boutique, "all")] });
-				}
-				else {
-					await interaction.reply({ embeds: [Spl.ShopListObjet(boutique, interaction.options.getString("nom"))] });
-				}
-			}
-			//Shop >> Item >> Buy >> options
-			else if (interaction.options._subcommand == "buy") {
-				qtt = interaction.options.getInteger("qtty");
-				nomObjet = interaction.options.getString("item");
-				joueurNom = interaction.options.getString("nom");
-				if (qtt <= 0) { qtt = 1; }
-				try {
-					if (typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
-					else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else {
-						if (rolistes[joueurNom].Money >= (boutique.shop.ShopObjet[nomObjet].Prix * qtt)) {
-							for (i = 0; i < qtt; i++) {
-								rolistes = AdIn.AddInventory(rolistes, boutique, nomObjet, joueurNom);
+       
+        
+				//Shop >> Item >> Buy >> options
+				else if(interaction.options._subcommand == "buy")
+                {
+					qtt = interaction.options.getInteger("qtty");
+					nomObjet = interaction.options.getString("item");
+					joueurNom = interaction.options.getString("nom");
+					if(qtt <= 0){qtt = 1;}
+					try {
+						if (typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
+						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else if (!boutique.shop.ShopObjet[nomObjet].Visible) throw "No Item";
+						else {
+							if (rolistes[joueurNom].Money >= (boutique.shop.ShopObjet[nomObjet].Prix * qtt)){
+								for(i=0;i<qtt;i++){
+									rolistes = AdIn.AddInventory(rolistes,boutique.shop.ShopObjet[nomObjet].Objet,joueurNom);
+								}
+								rolistes[joueurNom].Money -= boutique.shop.ShopObjet[nomObjet].Prix * qtt;
+								fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+								await interaction.reply({ content: joueurNom + " à acheter " + qtt + " " + nomObjet, ephemeral : true});
+							}
+							else{
+								await interaction.reply({ content: "Le joueur " + joueurNom + " n'a pas assez d'argent pour acheter " + nomObjet, ephemeral : true});
 							}
 							rolistes[joueurNom].Money -= boutique.shop.ShopObjet[nomObjet].Prix * qtt;
 							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
 							await interaction.reply({ content: joueurNom + " à acheter " + qtt + " " + nomObjet, ephemeral: true });
 						}
-						else {
-							await interaction.reply({ content: "Le joueur " + joueurNom + " n'a pas assez d'argent pour acheter " + nomObjet, ephemeral: true });
-						}
-					}
-				} catch (err) {
-					if (err == "No Item") {
-						await interaction.reply({ content: "Il n'y a pas d'item de ce nom dans le shop", ephemeral: true });
-					}
-					else if (err == "No player") {
-						await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral: true });
-					}
-				}
+					} catch (err) {
+                        if (err == "No Item") {
+                            await interaction.reply({ content: "Il n'y a pas d'item de ce nom dans le shop", ephemeral: true });
+                        }
+                        else if (err == "No player") {
+                            await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral: true });
+                        }
+				    }
 
-			}
-		}
-		else if (interaction.options._group == "arme") {
-			//Shop >> Item >> Add >> options
-			if (interaction.options._subcommand == "add") {
-				var tempo = {
-					Objet: {
-						Nom: interaction.options.getString("nom"),
-						Type: interaction.options.getString("type"),
-						Hand: interaction.options.getInteger("main"),
-						Weight: interaction.options.getInteger("pods"),
-						Damage: interaction.options.getInteger("dega"),
-						Precision: interaction.options.getInteger("prec"),
-						Effects: {}
-					},
-					Prix: interaction.options.getInteger("prix")
-				};
-				if (["Arc", "Fusil", "Pistolet"].includes(tempo.Objet.Type)) {
-					switch (tempo.Objet.Type) {
-						case "Arc":
-							tempo.Objet.Munitions = { Chargeur: 1, Reserve: 30, Recharge: 1 };
-							break; //Arcs, ...
-						case "Fusil":
-							tempo.Objet.Munitions = { Chargeur: 1, Reserve: 20, Recharge: 1 };
-							break; //Fusils, ...
-						case "Pistolet":
-							tempo.Objet.Munitions = { Chargeur: 6, Reserve: 30, Recharge: 1 };
-							break; //Revolvers, Pistolets, ...
-						default:
-							tempo.Objet.Munitions = { Chargeur: 0, Reserve: 0, Recharge: 1 };
-							break;
-					}
-				}
+			    }
+		    }
 
-				boutique.shop["ShopArmes"][tempo.Objet.Nom] = {
-					Objet: tempo.Objet,
-					Prix: tempo.Prix
-				}
-
-				fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-				await interaction.reply("Arme créé");
-			}
-			else if (interaction.options._subcommand == "list") {
-				if (interaction.options.getString("nom").toLowerCase() == "all") {
-					await interaction.reply({ embeds: [Spl.ShopListArme(boutique, "all")] });
-				}
-				else {
-					await interaction.reply({ embeds: [Spl.ShopListArme(boutique, interaction.options.getString("nom"))] });
-				}
-			}
-			else if (interaction.options._group == "arme") {
+            else if (interaction.options._group == "arme") {
+>>>>>>> 58d6f0e9cefa02952bf24de0ef7c2602a31d05b0
 				//Shop >> Item >> Add >> options
 				if(interaction.options._subcommand == "add")
 				{
@@ -305,16 +275,15 @@ module.exports = {
 								break;
 						}
 					}
+				    boutique.shop["ShopArmes"][tempo.Objet.Nom] = {
+					Objet: tempo.Objet,
+					Prix: tempo.Prix
+				    }
 
-					boutique.shop["ShopArmes"][tempo.Objet.Nom] = {
-						Objet: tempo.Objet,
-						Prix: tempo.Prix,
-						Visible: tempo.Visible
-					}
+				fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
+				await interaction.reply("Arme créé");
+			    }
 					
-					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-					await interaction.reply("Arme créé");
-				}
 				else if(interaction.options._subcommand == "list"){
 					var mssProperty = {message : "Rien a dire", privee : true};
 					if(interaction.options.getString("nom").toLowerCase() == "all")
@@ -325,18 +294,8 @@ module.exports = {
 						mssProperty = Spl.ShopListArme(boutique,interaction.options.getString("nom"),rolistes[interaction.options.getString("joueur")]);
 					}
 					await interaction.reply({embeds: [mssProperty.message], ephemeral: mssProperty.privee});
-				}
-				else if(interaction.options._subcommand == "effect"){
-					if(typeof boutique.shop.ShopArmes[interaction.options.getString("nom")] === "undefined")
-					{
-						await interaction.reply("L'objet n'existe pas");
-					}
-					else{
-						boutique.shop.ShopArmes[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
-						fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-						await interaction.reply("Effet ajouté");
-					}
-				}
+                }   
+
 				else if(interaction.options._subcommand == "buy"){
 					nomObjet = interaction.options.getString("arme");
 					joueurNom = interaction.options.getString("nom");
@@ -375,86 +334,100 @@ module.exports = {
 
 				}
 			}
-			else if (interaction.options._group == "armure") {
-				//Shop >> Item >> Add >> options
-				if(interaction.options._subcommand == "add")
-				{
-					var tempo = {
-						Objet: {
-							Nom: interaction.options.getString("nom"),
-							Type: interaction.options.getString("type"),
-							Weight: interaction.options.getInteger("pods"),
-							Res: { PHY: interaction.options.getInteger("rphy"), MEN: interaction.options.getInteger("rmen")},
-							Effects: {}
-						},
-						Prix: interaction.options.getInteger("prix"),
-						Visible: interaction.options.getBoolean("visi")
-					};
+			else if (interaction.options._subcommand == "effect") {
+				if (typeof boutique.shop.ShopArmes[interaction.options.getString("nom")] === "undefined") {
+					await interaction.reply("L'objet n'existe pas");
+				}
+				else {
+					boutique.shop.ShopArmes[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
 
-					boutique.shop["ShopArmures"][tempo.Objet.Nom] = {
-						Objet: tempo.Objet,
-						Prix: tempo.Prix,
-						Visible: tempo.Visible
-					}
-					
 					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-					await interaction.reply("Armure créé");
+					await interaction.reply("Effet ajouté");
 				}
-				else if(interaction.options._subcommand == "list"){
-					var mssProperty = {message : "Rien a dire", privee : true};
-					if(interaction.options.getString("nom").toLowerCase() == "all")
-					{
-						mssProperty = Spl.ShopListArmure(boutique,"all",rolistes[interaction.options.getString("joueur")]);
-					}
-					else{
-						mssProperty = Spl.ShopListArmure(boutique,interaction.options.getString("nom"),rolistes[interaction.options.getString("joueur")]);
-					}
-					await interaction.reply({embeds: [mssProperty.message], ephemeral: mssProperty.privee});
+			}
+
+            
+        else if (interaction.options._group == "armure") {
+            //Shop >> Item >> Add >> options
+            if(interaction.options._subcommand == "add")
+            {
+                var tempo = {
+                    Objet: {
+                        Nom: interaction.options.getString("nom"),
+                        Type: interaction.options.getString("type"),
+                        Weight: interaction.options.getInteger("pods"),
+                        Res: { PHY: interaction.options.getInteger("rphy"), MEN: interaction.options.getInteger("rmen")},
+                        Effects: {}
+                    },
+                    Prix: interaction.options.getInteger("prix"),
+                    Visible: interaction.options.getBoolean("visi")
+                };
+
+                boutique.shop["ShopArmures"][tempo.Objet.Nom] = {
+                    Objet: tempo.Objet,
+                    Prix: tempo.Prix,
+                    Visible: tempo.Visible
+                }
+
+				fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
+				await interaction.reply("Armure créé");
+			}
+
+            else if(interaction.options._subcommand == "list"){
+                var mssProperty = {message : "Rien a dire", privee : true};
+                if(interaction.options.getString("nom").toLowerCase() == "all")
+                {
+                    mssProperty = Spl.ShopListArmure(boutique,"all",rolistes[interaction.options.getString("joueur")]);
+                }
+                else{
+                    mssProperty = Spl.ShopListArmure(boutique,interaction.options.getString("nom"),rolistes[interaction.options.getString("joueur")]);
+                }
+                await interaction.reply({embeds: [mssProperty.message], ephemeral: mssProperty.privee});
+            }
+
+			else if (interaction.options._subcommand == "effect") {
+				if (typeof boutique.shop.ShopArmures[interaction.options.getString("nom")] === "undefined") {
+					await interaction.reply("L'objet n'existe pas");
 				}
-				else if(interaction.options._subcommand == "effect"){
-					if(typeof boutique.shop.ShopArmures[interaction.options.getString("nom")] === "undefined")
-					{
-						await interaction.reply("L'objet n'existe pas");
-					}
-					else{
-						boutique.shop.ShopArmures[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
-						fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
-						await interaction.reply("Effet ajouté");
-					}
+				else {
+					boutique.shop.ShopArmures[interaction.options.getString("nom")].Objet.Effects[interaction.options.getString("efct")] = interaction.options.getString("stat");
+					fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
+					await interaction.reply("Effet ajouté");
 				}
-				else if(interaction.options._subcommand == "buy"){
-					nomObjet = interaction.options.getString("armure");
-					joueurNom = interaction.options.getString("nom");
-					try {
-						if (typeof boutique.shop.ShopArmures[nomObjet] === "undefined") throw "No Item";
-						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
-						else if (!boutique.shop.ShopArmures[nomObjet].Visible) throw "No Item";
-						else {
-							if (rolistes[joueurNom].Money >= boutique.shop.ShopArmures[nomObjet].Prix){
-								var weaponTempo = AdIn.AddArmor({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmures[nomObjet].Objet});
-								rolistes[joueurNom] = weaponTempo[0];
-								rolistes[joueurNom].Money -= boutique.shop.ShopArmures[nomObjet].Prix;
-								
-								if(typeof boutique.shop.ShopArmures[weaponTempo[1][0].Nom] !== "undefined")
-								{
-									rolistes[joueurNom].Money += boutique.shop.ShopArmures[weaponTempo[1][0].Nom].Prix /2;									
-								}
-								fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-								await interaction.reply({ content: joueurNom + " à acheter " + nomObjet, ephemeral : true});
-							}
-							else{
-								await interaction.reply({ content: "Armurier: \r\n\nTu n'as pas assez d'argent pour acheter ce petit bijoux, reviens après quelque mission", ephemeral : true});
-							}
-						}
-					} catch(err){
-						if(err == "No Item"){
-							await interaction.reply({ content: "Armurier: \r\n\nJ'ai pas ça dans mes petites merveilles", ephemeral : true});
-						}
-						else if(err == "No player"){
-							await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral : true});
-						}
-					}
-				}
+            }
+				
+            else if(interaction.options._subcommand == "buy"){
+                nomObjet = interaction.options.getString("armure");
+                joueurNom = interaction.options.getString("nom");
+                try {
+                    if (typeof boutique.shop.ShopArmures[nomObjet] === "undefined") throw "No Item";
+                    else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
+                    else if (!boutique.shop.ShopArmures[nomObjet].Visible) throw "No Item";
+                    else {
+                        if (rolistes[joueurNom].Money >= boutique.shop.ShopArmures[nomObjet].Prix){
+                            var weaponTempo = AdIn.AddArmor({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmures[nomObjet].Objet});
+                            rolistes[joueurNom] = weaponTempo[0];
+                            rolistes[joueurNom].Money -= boutique.shop.ShopArmures[nomObjet].Prix;
+                            
+                            if(typeof boutique.shop.ShopArmures[weaponTempo[1][0].Nom] !== "undefined")
+                            {
+                                rolistes[joueurNom].Money += boutique.shop.ShopArmures[weaponTempo[1][0].Nom].Prix /2;									
+                            }
+                            fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+                            await interaction.reply({ content: joueurNom + " à acheter " + nomObjet, ephemeral : true});
+                        }
+                        else{
+                            await interaction.reply({ content: "Armurier: \r\n\nTu n'as pas assez d'argent pour acheter ce petit bijoux, reviens après quelque mission", ephemeral : true});
+                        }
+                    }
+                } catch(err){
+                    if(err == "No Item"){
+                        await interaction.reply({ content: "Armurier: \r\n\nJ'ai pas ça dans mes petites merveilles", ephemeral : true});
+                    }
+                    else if(err == "No player"){
+                        await interaction.reply({ content: "Il n'y a pas de joueur de ce nom", ephemeral : true});
+                    }
+                }
 			}
 		}
 		else if (interaction.options._group == "armure") {

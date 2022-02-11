@@ -1,9 +1,9 @@
 const fs = require("fs");
 
-var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
 
 function WlAdd(userID, perso) {
 
+	var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
 	var whitelist = JSON.parse(fs.readFileSync("./donnees/Whitelist.json"));
 
 	var obj = {};

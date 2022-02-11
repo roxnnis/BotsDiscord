@@ -21,11 +21,12 @@ function PersoAdd(rolistes, interaction){
 				int: interaction.options.getInteger("int"),
 				soc: interaction.options.getInteger("soc"),
 				cha: interaction.options.getInteger("cha")
-			}),
-		
+			})
 	});
-	
+	const USER_ID = interaction.options.getUser("usr").id;
+
 	rolistes[tempo.Nom] = {
+		User: USER_ID,
 		Nom: tempo.Nom,
 		LVL: tempo.LVL,
 		Money: tempo.Money,

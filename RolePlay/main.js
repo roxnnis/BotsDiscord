@@ -25,8 +25,7 @@ var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
 fs.writeFileSync(`./donnees/Personnages.json`, JSON.stringify(rolistes));
 
 
-
-//
+//Commande en cours
 bot.on("interactionCreate", async (interaction) => {
 
 	if (!interaction.isCommand() || !salonJDR.includes(interaction.channelId))

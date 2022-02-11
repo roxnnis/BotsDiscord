@@ -3,6 +3,7 @@ const fs = require("fs");
 
 //Récupérer les classes
 const { Personnages } = require(`../../classes/Personnages`);
+const { Stats } = require("../../classes/Stats");
 
 /**
  * Ajoute un personnage dans le registre.
@@ -13,7 +14,7 @@ function PersoAdd(rolistes, interaction){
 
 	tempo = new Personnages({
 		Nom: interaction.options.getString("nom"),
-		Stats: new Classes.Stats(
+		Stats: new Stats(
 			{
 				phy: interaction.options.getInteger("phy"),
 				men: interaction.options.getInteger("men"),
@@ -37,7 +38,7 @@ function PersoAdd(rolistes, interaction){
 		Dcm: tempo.Dcm
 	};
 
-	fs.writeFileSync("Personnages.json", JSON.stringify(rolistes));
+	fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
 }
 
 exports.PersoAdd = PersoAdd;

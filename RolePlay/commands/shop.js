@@ -242,7 +242,6 @@ module.exports = {
 		    }
 
             else if (interaction.options._group == "arme") {
->>>>>>> 58d6f0e9cefa02952bf24de0ef7c2602a31d05b0
 				//Shop >> Item >> Add >> options
 				if(interaction.options._subcommand == "add")
 				{

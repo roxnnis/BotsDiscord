@@ -1,6 +1,8 @@
 //Requires
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const fs = require("fs");
+const { Armes } = require("../classes/Armes.js");
+const { Personnages } = require("../classes/Personnages.js");
 
 const PInf = require(`${process.cwd()}/commands/fonctions/personnageInfo.js`);
 const PAdd = require(`${process.cwd()}/commands/fonctions/personnageAdd.js`);
@@ -78,7 +80,39 @@ module.exports = {
 						.addIntegerOption((option) => option.setName("qtty").setDescription("Nombre d'exemplaires").setRequired(true))
 					)
 		)
-		,
+		.addSubcommandGroup(subcommandgroup =>
+			subcommandgroup
+				.setName("arme")
+				.setDescription("Action sur l'inventaire d'un joueur")
+				//item add
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("give")
+						.setDescription("ADMIN : Ajouter un objet à l'inventaire d'un joueur")
+						.addStringOption((option) => option.setName("nom").setDescription("Nom du joueur").setRequired(true))
+						.addStringOption((option) => option.setName("arme").setDescription("Nom de l'objet").setRequired(true))
+						.addStringOption((option) => option.setName("slot").setDescription("Emplacement de l'objet").setRequired(true).addChoice("Main principale","Principale").addChoice("Main secondaire","Auxiliaire"))
+						.addBooleanOption((option) => option.setName("visi").setDescription("Message visible").setRequired(true))
+					)
+				//item del
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("del")
+						.setDescription("ADMIN : Retirer un objet à l'inventaire d'un joueur")
+						.addStringOption((option) => option.setName("nom").setDescription("Nom du joueur").setRequired(true))
+						.addStringOption((option) => option.setName("arme").setDescription("Nom de l'objet").setRequired(true))
+						.addBooleanOption((option) => option.setName("visi").setDescription("Message visible").setRequired(true))
+					)
+				//item use
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("use")
+						.setDescription("Utilise un objet")
+						.addStringOption((option) => option.setName("nom").setDescription("Nom du joueur").setRequired(true))
+						.addStringOption((option) => option.setName("objet").setDescription("Nom de l'objet").setRequired(true))
+						.addIntegerOption((option) => option.setName("qtty").setDescription("Nombre d'exemplaires").setRequired(true))
+					)
+			),
 	async execute(interaction) {
 
 		var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
@@ -211,9 +245,128 @@ module.exports = {
 					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 				}
 			}
-			
+		}
+
+		else if (interaction.options._group == "arme")
+		{
+			//nom, objet, qtty
+			if(interaction.options._subcommand == "give")
+			{
+				joueurNom = interaction.options.getString("nom");
+				nomObjet = interaction.options.getString("arme");
+				visible = interaction.options.getBoolean("visi");
+				slot = interaction.options.getString("slot");
+				try{
+					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+					else if(typeof boutique.shop.ShopArmes[nomObjet] === "undefined") throw "No Item";
+					else{
+						var tempo = AdIn.AddWeapon({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmes[nomObjet].Objet,slot : slot});
+						rolistes[joueurNom] = tempo[0];
+						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+						await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
+					}
+				} catch(err){
+					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				}
+			}
 
 
+			if(interaction.options._subcommand == "del")
+			{
+				joueurNom = interaction.options.getString("nom");
+				objetNom = interaction.options.getString("arme");
+				visible = interaction.options.getBoolean("visi");
+
+				try{
+					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+					else{
+						if(rolistes[joueurNom].Weapons.Principale.Nom == objetNom)
+						{
+							rolistes[joueurNom].Weapons.Principale = {
+								Nom: "Aucune",
+								Type: "None",
+								Hand: 0,
+								Weight: 0,
+								Damage: 0,
+								Precision: 0,
+								Effects: { None: "Aucun effet" }
+							};
+						}
+						else if(typeof rolistes[joueurNom].Weapons.Auxiliaire !== "undefined" && rolistes[joueurNom].Weapons.Auxiliaire.Nom == objetNom)
+						{
+							delete rolistes[joueurNom].Weapons.Auxiliaire;
+						}
+						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+						await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
+					}
+				} catch(err){
+					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				}
+			}
+
+			if(interaction.options._subcommand == "use")
+			{
+				joueurNom = interaction.options.getString("nom");
+				objetNom = interaction.options.getString("objet");
+				qtt = interaction.options.getInteger("qtty");
+				var reload = false;
+				try{
+					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+					else{
+						var temponame = "";
+						for(var key in rolistes[joueurNom].Weapons)
+						{
+							if(rolistes[joueurNom].Weapons[key].Nom == objetNom)
+							{
+								temponame = key;
+							}
+						}
+						if(temponame == "") throw "No Item";
+						if(typeof rolistes[joueurNom].Weapons[temponame].Munitions !== "undefined")
+						{
+							if(rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur <= 0)
+							{
+								if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve == 0){
+									throw "No amo";
+								}
+								else if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve >= rolistes[joueurNom].Weapons[temponame].Munitions.Recharge){
+									rolistes[joueurNom].Weapons[temponame].Munitions.Reserve -= rolistes[joueurNom].Weapons[temponame].Munitions.Recharge;
+									rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur = rolistes[joueurNom].Weapons[temponame].Munitions.Recharge;
+									reload = true
+								}
+								else if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve < rolistes[joueurNom].Weapons[temponame].Munitions.Recharge)
+								{
+									rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur = rolistes[joueurNom].Weapons[temponame].Munitions.Reserve;
+									rolistes[joueurNom].Weapons[temponame].Munitions.Reserve = 0;
+									reload = true;
+								}
+							}
+							else{
+								rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur -= qtt;
+							}
+						}
+						else
+						{
+							throw "No use";
+						}
+						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+						if(reload)
+						{
+							await interaction.reply({ content: "Rechargement fini", ephemeral: true});
+						}
+						else{
+							await interaction.reply({ content: joueurNom + " à utilisé " + objetNom, ephemeral : false});
+						}
+					}
+				} catch(err){
+					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+					else if(err == "No use") await interaction.reply({ content: "Cet objet n'a pas de munition", ephemeral: true});
+					else if(err == "No amo") await interaction.reply({ content: "Cet objet n'a plus de munition", ephemeral: false});
+				}
+			}
 		}
 
 		

@@ -112,7 +112,30 @@ module.exports = {
 						.addStringOption((option) => option.setName("objet").setDescription("Nom de l'objet").setRequired(true))
 						.addIntegerOption((option) => option.setName("qtty").setDescription("Nombre d'exemplaires").setRequired(true))
 					)
-			),
+			)
+			.addSubcommandGroup(subcommandgroup =>
+				subcommandgroup
+					.setName("armure")
+					.setDescription("Action sur l'inventaire d'un joueur")
+					//item add
+					.addSubcommand(subcommand =>
+						subcommand
+							.setName("give")
+							.setDescription("ADMIN : Ajouter d'une armure à l'inventaire d'un joueur")
+							.addStringOption((option) => option.setName("nom").setDescription("Nom du joueur").setRequired(true))
+							.addStringOption((option) => option.setName("arme").setDescription("Nom de l'objet").setRequired(true))
+							.addBooleanOption((option) => option.setName("visi").setDescription("Message visible").setRequired(true))
+						)
+					//item del
+					.addSubcommand(subcommand =>
+						subcommand
+							.setName("del")
+							.setDescription("ADMIN : Retirer une armure à l'inventaire d'un joueur")
+							.addStringOption((option) => option.setName("nom").setDescription("Nom du joueur").setRequired(true))
+							.addStringOption((option) => option.setName("arme").setDescription("Nom de l'objet").setRequired(true))
+							.addBooleanOption((option) => option.setName("visi").setDescription("Message visible").setRequired(true))
+						)
+				),
 	async execute(interaction) {
 
 		var rolistes = JSON.parse(fs.readFileSync("./donnees/Personnages.json"));
@@ -147,7 +170,7 @@ module.exports = {
 			//Personnage dcm set
 		}
 		
-		//Partie Itema
+		//Partie Item
 		else if (interaction.options._group == "item")
 		{
 			//nom, objet, qtty
@@ -246,7 +269,7 @@ module.exports = {
 				}
 			}
 		}
-
+		//Partie Arme
 		else if (interaction.options._group == "arme")
 		{
 			//nom, objet, qtty
@@ -368,7 +391,61 @@ module.exports = {
 				}
 			}
 		}
+		//Partie Armure
+		else if (interaction.options._group == "armure")
+		{
+			//nom, objet, qtty
+			if(interaction.options._subcommand == "give")
+			{
+				joueurNom = interaction.options.getString("nom");
+				nomObjet = interaction.options.getString("arme");
+				visible = interaction.options.getBoolean("visi");
+				try{
+					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+					else if(typeof boutique.shop.ShopArmures[nomObjet] === "undefined") throw "No Item";
+					else{
+						var tempo = AdIn.AddArmor({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmures[nomObjet].Objet});
+						rolistes[joueurNom] = tempo[0];
+						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+						await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
+					}
+				} catch(err){
+					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				}
+			}
 
+			if(interaction.options._subcommand == "del")
+			{
+				joueurNom = interaction.options.getString("nom");
+				objetNom = interaction.options.getString("arme");
+				visible = interaction.options.getBoolean("visi");
+
+				try{
+					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+					else{
+						if(rolistes[joueurNom].Armors.Principale.Nom == objetNom)
+						{
+							rolistes[joueurNom].Armors.Principale = {
+								Nom: "Aucune",
+								Type: "None",
+								Weight: 0,
+								Res: {PHY: 0, MEN:0, OTHERS: {None: "None"}},
+								Effects: { None: "Aucun effet" }
+							};
+						}
+						else{
+							throw "No Item";
+						}
+						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+						await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
+					}
+				} catch(err){
+					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				}
+			}
+		}
 		
 		
 		

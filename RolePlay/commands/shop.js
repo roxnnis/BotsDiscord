@@ -205,7 +205,7 @@ module.exports = {
 					}
 					await interaction.reply({ embeds: [mssProperty.message], ephemeral: mssProperty.privee });
 				} else {
-					interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
+					await interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
 				}
 			}
 
@@ -222,7 +222,6 @@ module.exports = {
 						else if (typeof rolistes[joueurNom] === "undefined") throw "No player";
 						else if (!boutique.shop.ShopObjet[nomObjet].Visible) throw "No Item";
 						else {
-							console.log("225SHOP -", "Salut");
 							if (rolistes[joueurNom].Money >= (boutique.shop.ShopObjet[nomObjet].Prix * qtt)) {
 								for (i = 0; i < qtt; i++) {
 									rolistes = AdIn.AddInventory(rolistes, boutique.shop.ShopObjet[nomObjet].Objet, joueurNom);
@@ -234,9 +233,6 @@ module.exports = {
 							else {
 								await interaction.reply({ content: "Le joueur " + joueurNom + " n'a pas assez d'argent pour acheter " + nomObjet, ephemeral: true });
 							}
-							rolistes[joueurNom].Money -= boutique.shop.ShopObjet[nomObjet].Prix * qtt;
-							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-							await interaction.reply({ content: joueurNom + " a acheté " + qtt + " " + nomObjet, ephemeral: true });
 						}
 					} catch (err) {
 						if (err == "No Item") {

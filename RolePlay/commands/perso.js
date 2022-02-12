@@ -8,6 +8,9 @@ const PInf = require(`${process.cwd()}/commands/fonctions/personnageInfo.js`);
 const PAdd = require(`${process.cwd()}/commands/fonctions/personnageAdd.js`);
 const AdIn = require("./fonctions/addInventory.js");
 
+const PERMISSIONS = JSON.parse(fs.readFileSync("./donnees/Whitelist.json"));
+const ADMIN = "185352234580574208";
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		//Commande principale PERSO
@@ -143,12 +146,17 @@ module.exports = {
 
 		//INFORMATIONS DU PERSONNAGE
 		if (interaction.options._subcommand == "info") {
-			NomDonne = interaction.options.getString("nom"); //Requête par nom
-			await interaction.reply({ embeds: [PInf.PersoInfo(rolistes)] });
+			if(PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN)
+			{
+				NomDonne = interaction.options.getString("nom"); //Requête par nom
+				await interaction.reply({ embeds: [PInf.PersoInfo(rolistes)] });
+			} else {
+				await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
+			}
 		}
 		//AJOUTER UN PERSONNAGE
 		else if (interaction.options._subcommand == "add") {
-			if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+			if (interaction.user.id == ADMIN) {
 				//Ajout
 				PAdd.PersoAdd(rolistes, interaction);
 				await interaction.reply("Votre personnage vient d'être créé.");
@@ -159,7 +167,7 @@ module.exports = {
 		}
 		//CHANGER LE DCM
 		else if (interaction.options._subcommand == "dcm") {
-			if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+			if (interaction.user.id == ADMIN) {
 			NomDonne = interaction.options.getString("nom"); //Requête par nom
 			rolistes[NomDonne].Dcm = interaction.options.getString("dcm");
 			fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
@@ -176,7 +184,7 @@ module.exports = {
 			//nom, objet, qtty
 			if(interaction.options._subcommand == "give")
 			{
-				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+				if (interaction.user.id == ADMIN) {
 					joueurNom = interaction.options.getString("nom");
 					nomObjet = interaction.options.getString("objet");
 					qtt = interaction.options.getInteger("qtty");
@@ -204,7 +212,7 @@ module.exports = {
 
 			if(interaction.options._subcommand == "del")
 			{
-				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+				if (interaction.user.id == ADMIN) {
 					joueurNom = interaction.options.getString("nom");
 					objetNom = interaction.options.getString("objet");
 					visible = interaction.options.getBoolean("visi");
@@ -233,47 +241,52 @@ module.exports = {
 
 			if(interaction.options._subcommand == "use")
 			{
-				joueurNom = interaction.options.getString("nom");
-				objetNom = interaction.options.getString("objet");
-				qtt = interaction.options.getInteger("qtty");
-				
-				if(qtt <= 0){qtt = 1;}
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else{
-						var temponame = "";
-						for(var key in rolistes[joueurNom].Inv)
-						{
-							if(key.substring(0,objetNom.length) == objetNom && temponame == "")
+				if(PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN)
+				{
+					joueurNom = interaction.options.getString("nom");
+					objetNom = interaction.options.getString("objet");
+					qtt = interaction.options.getInteger("qtty");
+					
+					if(qtt <= 0){qtt = 1;}
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else{
+							var temponame = "";
+							for(var key in rolistes[joueurNom].Inv)
 							{
-								temponame = key;
+								if(key.substring(0,objetNom.length) == objetNom && temponame == "")
+								{
+									temponame = key;
+								}
 							}
-						}
-						if(typeof rolistes[joueurNom].Inv[temponame].Remain !== "undefined")
-						{
-							if(rolistes[joueurNom].Inv[temponame].Remain >= qtt)
+							if(typeof rolistes[joueurNom].Inv[temponame].Remain !== "undefined")
 							{
-								rolistes[joueurNom].Inv[temponame].Remain -= qtt;
+								if(rolistes[joueurNom].Inv[temponame].Remain >= qtt)
+								{
+									rolistes[joueurNom].Inv[temponame].Remain -= qtt;
+								}
+								else
+								{
+									rolistes[joueurNom].Inv[temponame].Remain = 0;
+								}
+								if(rolistes[joueurNom].Inv[temponame].Remain == 0)
+								{
+									delete rolistes[joueurNom].Inv[temponame];
+								}
 							}
 							else
 							{
-								rolistes[joueurNom].Inv[temponame].Remain = 0;
-							}
-							if(rolistes[joueurNom].Inv[temponame].Remain == 0)
-							{
 								delete rolistes[joueurNom].Inv[temponame];
 							}
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							await interaction.reply({ content: joueurNom + " à utilisé " + objetNom, ephemeral : false});
 						}
-						else
-						{
-							delete rolistes[joueurNom].Inv[temponame];
-						}
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à utilisé " + objetNom, ephemeral : false});
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 		}
@@ -283,7 +296,7 @@ module.exports = {
 			//nom, objet, qtty
 			if(interaction.options._subcommand == "give")
 			{
-				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+				if (interaction.user.id == ADMIN) {
 					joueurNom = interaction.options.getString("nom");
 					nomObjet = interaction.options.getString("arme");
 					visible = interaction.options.getBoolean("visi");
@@ -309,7 +322,7 @@ module.exports = {
 
 			if(interaction.options._subcommand == "del")
 			{
-				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+				if (interaction.user.id == ADMIN) {
 					joueurNom = interaction.options.getString("nom");
 					objetNom = interaction.options.getString("arme");
 					visible = interaction.options.getBoolean("visi");
@@ -347,63 +360,68 @@ module.exports = {
 
 			if(interaction.options._subcommand == "use")
 			{
-				joueurNom = interaction.options.getString("nom");
-				objetNom = interaction.options.getString("objet");
-				qtt = interaction.options.getInteger("qtty");
-				var reload = false;
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else{
-						var temponame = "";
-						for(var key in rolistes[joueurNom].Weapons)
-						{
-							if(rolistes[joueurNom].Weapons[key].Nom == objetNom)
+				if(PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN)
+				{
+					joueurNom = interaction.options.getString("nom");
+					objetNom = interaction.options.getString("objet");
+					qtt = interaction.options.getInteger("qtty");
+					var reload = false;
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else{
+							var temponame = "";
+							for(var key in rolistes[joueurNom].Weapons)
 							{
-								temponame = key;
-							}
-						}
-						if(temponame == "") throw "No Item";
-						if(typeof rolistes[joueurNom].Weapons[temponame].Munitions !== "undefined")
-						{
-							if(rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur <= 0)
-							{
-								if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve == 0){
-									throw "No amo";
-								}
-								else if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve >= rolistes[joueurNom].Weapons[temponame].Munitions.Recharge){
-									rolistes[joueurNom].Weapons[temponame].Munitions.Reserve -= rolistes[joueurNom].Weapons[temponame].Munitions.Recharge;
-									rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur = rolistes[joueurNom].Weapons[temponame].Munitions.Recharge;
-									reload = true
-								}
-								else if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve < rolistes[joueurNom].Weapons[temponame].Munitions.Recharge)
+								if(rolistes[joueurNom].Weapons[key].Nom == objetNom)
 								{
-									rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur = rolistes[joueurNom].Weapons[temponame].Munitions.Reserve;
-									rolistes[joueurNom].Weapons[temponame].Munitions.Reserve = 0;
-									reload = true;
+									temponame = key;
 								}
+							}
+							if(temponame == "") throw "No Item";
+							if(typeof rolistes[joueurNom].Weapons[temponame].Munitions !== "undefined")
+							{
+								if(rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur <= 0)
+								{
+									if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve == 0){
+										throw "No amo";
+									}
+									else if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve >= rolistes[joueurNom].Weapons[temponame].Munitions.Recharge){
+										rolistes[joueurNom].Weapons[temponame].Munitions.Reserve -= rolistes[joueurNom].Weapons[temponame].Munitions.Recharge;
+										rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur = rolistes[joueurNom].Weapons[temponame].Munitions.Recharge;
+										reload = true
+									}
+									else if(rolistes[joueurNom].Weapons[temponame].Munitions.Reserve < rolistes[joueurNom].Weapons[temponame].Munitions.Recharge)
+									{
+										rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur = rolistes[joueurNom].Weapons[temponame].Munitions.Reserve;
+										rolistes[joueurNom].Weapons[temponame].Munitions.Reserve = 0;
+										reload = true;
+									}
+								}
+								else{
+									rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur -= qtt;
+								}
+							}
+							else
+							{
+								throw "No use";
+							}
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							if(reload)
+							{
+								await interaction.reply({ content: "Rechargement fini", ephemeral: true});
 							}
 							else{
-								rolistes[joueurNom].Weapons[temponame].Munitions.Chargeur -= qtt;
+								await interaction.reply({ content: joueurNom + " à utilisé " + objetNom, ephemeral : false});
 							}
 						}
-						else
-						{
-							throw "No use";
-						}
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						if(reload)
-						{
-							await interaction.reply({ content: "Rechargement fini", ephemeral: true});
-						}
-						else{
-							await interaction.reply({ content: joueurNom + " à utilisé " + objetNom, ephemeral : false});
-						}
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+						else if(err == "No use") await interaction.reply({ content: "Cet objet n'a pas de munition", ephemeral: true});
+						else if(err == "No amo") await interaction.reply({ content: "Cet objet n'a plus de munition", ephemeral: false});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
-					else if(err == "No use") await interaction.reply({ content: "Cet objet n'a pas de munition", ephemeral: true});
-					else if(err == "No amo") await interaction.reply({ content: "Cet objet n'a plus de munition", ephemeral: false});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 		}
@@ -413,7 +431,7 @@ module.exports = {
 			//nom, objet, qtty
 			if(interaction.options._subcommand == "give")
 			{
-				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+				if (interaction.user.id == ADMIN) {
 					joueurNom = interaction.options.getString("nom");
 					nomObjet = interaction.options.getString("arme");
 					visible = interaction.options.getBoolean("visi");
@@ -437,7 +455,7 @@ module.exports = {
 
 			if(interaction.options._subcommand == "del")
 			{
-				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+				if (interaction.user.id == ADMIN) {
 					joueurNom = interaction.options.getString("nom");
 					objetNom = interaction.options.getString("arme");
 					visible = interaction.options.getBoolean("visi");

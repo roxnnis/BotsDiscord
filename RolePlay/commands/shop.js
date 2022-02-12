@@ -212,10 +212,10 @@ module.exports = {
 
 			//Shop >> Item >> Buy >> options
 			else if (interaction.options._subcommand == "buy") {
-				if (PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN) {
+				joueurNom = interaction.options.getString("nom");
+				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom])) {
 					qtt = interaction.options.getInteger("qtty");
 					nomObjet = interaction.options.getString("item");
-					joueurNom = interaction.options.getString("nom");
 					if (qtt <= 0) { qtt = 1; }
 					try {
 						if (typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
@@ -309,7 +309,7 @@ module.exports = {
 			}
 
 			else if (interaction.options._subcommand == "buy") {
-				if (PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN) {
+				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom])) {
 					nomObjet = interaction.options.getString("arme");
 					joueurNom = interaction.options.getString("nom");
 					try {
@@ -423,7 +423,7 @@ module.exports = {
 				}}
 
 			else if (interaction.options._subcommand == "buy") {
-				if (PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN) {
+				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom])) {
 					nomObjet = interaction.options.getString("armure");
 					joueurNom = interaction.options.getString("nom");
 					try {

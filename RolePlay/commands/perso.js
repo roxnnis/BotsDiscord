@@ -146,7 +146,7 @@ module.exports = {
 
 		//INFORMATIONS DU PERSONNAGE
 		if (interaction.options._subcommand == "info") {
-			if(PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN)
+			if(interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom]))
 			{
 				NomDonne = interaction.options.getString("nom"); //Requête par nom
 				await interaction.reply({ embeds: [PInf.PersoInfo(rolistes)] });
@@ -241,7 +241,7 @@ module.exports = {
 
 			if(interaction.options._subcommand == "use")
 			{
-				if(PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN)
+				if(interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom]))
 				{
 					joueurNom = interaction.options.getString("nom");
 					objetNom = interaction.options.getString("objet");
@@ -360,7 +360,7 @@ module.exports = {
 
 			if(interaction.options._subcommand == "use")
 			{
-				if(PERMISSIONS[interaction.user.id] || interaction.user.id == ADMIN)
+				if(interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom]))
 				{
 					joueurNom = interaction.options.getString("nom");
 					objetNom = interaction.options.getString("objet");

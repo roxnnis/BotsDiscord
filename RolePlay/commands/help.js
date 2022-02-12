@@ -20,13 +20,22 @@ module.exports = {
 					"inline": true
 				},
 				{
-					"name": "__/shop__ [item/arme/armure] list [<objet>/all] <nom>",
+					"name": "__/shop__ [item / arme / armure] list [nomObjet / all] <nom>",
 					"value": "Affiche la liste du magasin",
 					"inline": true
 				},
 				{
-					"name": "__/shop__ [item/arme/armure] buy [nom] <quantité>",
+					"name": "__/shop__ [item / arme / armure] buy [nom] <quantité>",
 					"value": "Achète l'objet demandé (Quantité de fois)",
+					"inline": true
+				},
+				{
+					"name":"\u200b",
+					"value":"\u200b"
+				},
+				{
+					"name": "__/roll__ <nb> <maxDé>",
+					"value": "Lance 'nb' dés de 'maxDé' faces (Défaut (sans param) : 1d100)",
 					"inline": true
 				},
 				{

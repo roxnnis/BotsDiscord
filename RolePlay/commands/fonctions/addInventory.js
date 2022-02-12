@@ -1,9 +1,10 @@
 function AddInventory(rolistes,objet,joueurNom){
+    console.log("4adin - " + rolistes[joueurNom].Inv[nomObjet]);
     if(objet.Stackable == false && typeof rolistes[joueurNom].Inv[nomObjet] !== "undefined")
     {
-        var i = 0;
-        while(i = 0 || typeof rolistes[joueurNom].Inv[nomObjet + i] !== "undefined"){i++;}
-        rolistes[joueurNom].Inv[nomObjet + i] = {
+        var i = 1;
+        while(typeof rolistes[joueurNom].Inv[nomObjet + " " + i] !== "undefined"){i++;}
+        rolistes[joueurNom].Inv[nomObjet + " " + i] = {
             Nom:objet.Nom,
             Quantity:objet.Quantity,
             Stackable:objet.Stackable,
@@ -52,15 +53,44 @@ function AddWeapon({rolistes,objet,slot = "Principale"}){
             Weight: objet.Weight,
             Damage: objet.Damage,
             Precision: objet.Precision,
-            Munition: objet.Munition,
+            Munitions: objet.Munitions,
             Effects: objet.Effects
         };
         delete rolistes.Weapons["Auxiliaire"];
     }
     else if(objet.Hand == 1)
     {
-        if(rolistes.Weapons["Principale"].Hand == 2)
+        if(typeof rolistes.Weapons["Principale"] !== "undefined")
         {
+            if(rolistes.Weapons["Principale"].Hand == 2)
+            {
+                oldWeapon = [rolistes.Weapons["Principale"]];
+                rolistes.Weapons["Principale"] = {
+                    Nom: objet.Nom,
+                    Type: objet.Type,
+                    Hand: objet.Hand,
+                    Weight: objet.Weight,
+                    Damage: objet.Damage,
+                    Precision: objet.Precision,
+                    Munitions: objet.Munitions,
+                    Effects: objet.Effects
+                }
+            }
+            else {
+                oldWeapon = [rolistes.Weapons[slot]];
+                rolistes.Weapons[slot] = {
+                    Nom: objet.Nom,
+                    Type: objet.Type,
+                    Hand: objet.Hand,
+                    Weight: objet.Weight,
+                    Damage: objet.Damage,
+                    Precision: objet.Precision,
+                    Munitions: objet.Munitions,
+                    Effects: objet.Effects
+                }
+            }
+        }
+        else{
             oldWeapon = [rolistes.Weapons["Principale"]];
             rolistes.Weapons["Principale"] = {
                 Nom: objet.Nom,
@@ -69,20 +99,7 @@ function AddWeapon({rolistes,objet,slot = "Principale"}){
                 Weight: objet.Weight,
                 Damage: objet.Damage,
                 Precision: objet.Precision,
-                Munition: objet.Munition,
-                Effects: objet.Effects
-            }
-        }
-        else {
-            oldWeapon = [rolistes.Weapons[slot]];
-            rolistes.Weapons[slot] = {
-                Nom: objet.Nom,
-                Type: objet.Type,
-                Hand: objet.Hand,
-                Weight: objet.Weight,
-                Damage: objet.Damage,
-                Precision: objet.Precision,
-                Munition: objet.Munition,
+                Munitions: objet.Munitions,
                 Effects: objet.Effects
             }
         }
@@ -103,5 +120,5 @@ function AddArmor({rolistes,objet}){
 }
 
 exports.AddInventory = AddInventory;
-exports.AddWeapon = AddWeapon;
 exports.AddArmor = AddArmor;
+exports.AddWeapon = AddWeapon; 

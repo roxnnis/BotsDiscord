@@ -47,7 +47,7 @@ module.exports = {
 			}
 		}
 		} else {
-			await interaction.reply("Vous n'avez pas accès à cette commande !")
+			await interaction.reply({content:"Vous n'avez pas accès à cette commande !", ephemeral:true})
 		}
 	}
 }

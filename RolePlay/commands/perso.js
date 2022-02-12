@@ -24,6 +24,7 @@ module.exports = {
 
 				//Perso >> Info >> Options
 				.addStringOption((option) => option.setName("nom").setDescription("Préciser le nom du personnage").setRequired(true))
+				.addBooleanOption((option) => option.setName("visible").setDescription("Montrer ou non sa fiche au publique || True : Affiché || False (défaut): Caché").setRequired(false))
 		)
 
 		//Perso >> Add
@@ -149,7 +150,13 @@ module.exports = {
 			if(interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][interaction.options.getString("nom")]))
 			{
 				NomDonne = interaction.options.getString("nom"); //Requête par nom
-				await interaction.reply({ embeds: [PInf.PersoInfo(rolistes)] });
+				
+				if(interaction.options.getBoolean("visible") == null){
+					visibilite = true
+				} else {
+					visibilite = !interaction.options.getBoolean("visible")
+				}
+				await interaction.reply({embeds: [PInf.PersoInfo(rolistes)] , ephemeral: visibilite});
 			} else {
 				await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 			}

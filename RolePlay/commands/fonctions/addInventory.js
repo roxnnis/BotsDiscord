@@ -1,5 +1,4 @@
 function AddInventory(rolistes,objet,joueurNom){
-    console.log("4adin - " + rolistes[joueurNom].Inv[nomObjet]);
     if(objet.Stackable == false && typeof rolistes[joueurNom].Inv[nomObjet] !== "undefined")
     {
         var i = 1;

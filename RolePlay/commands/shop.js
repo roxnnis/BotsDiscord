@@ -52,6 +52,14 @@ module.exports = {
 						.addStringOption((option) => option.setName("item").setDescription("Nom de l'objet").setRequired(true))
 						.addIntegerOption((option) => option.setName("qtty").setDescription("Quantité acheté").setRequired(false))
 				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("set")
+						.setDescription("Acheter un objet")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("item").setDescription("Nom de l'objet").setRequired(true))
+						.addBooleanOption((option) => option.setName("visi").setDescription("Visibilité de l'objet").setRequired(true))
+				)
 		)
 		.addSubcommandGroup(subcommandgroup =>
 			subcommandgroup
@@ -99,6 +107,14 @@ module.exports = {
 						.addStringOption((option) => option.setName("slot").setDescription("Emplacement de l'arme").setRequired(false)
 							.addChoice("Main principale", "Principale").addChoice("Main secondaire", "Auxiliaire"))
 				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("set")
+						.setDescription("Acheter un objet")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("item").setDescription("Nom de l'objet").setRequired(true))
+						.addBooleanOption((option) => option.setName("visi").setDescription("Visibilité de l'objet").setRequired(true))
+				)
 		)
 		.addSubcommandGroup(subcommandgroup =>
 			subcommandgroup
@@ -142,6 +158,14 @@ module.exports = {
 						// shop >> item >> list >> options
 						.addStringOption((option) => option.setName("nom").setDescription("Nom du Joueur").setRequired(true))
 						.addStringOption((option) => option.setName("armure").setDescription("Nom de l'armure").setRequired(true))
+				)
+				.addSubcommand(subcommand =>
+					subcommand
+						.setName("set")
+						.setDescription("Acheter un objet")
+						// shop >> item >> list >> options
+						.addStringOption((option) => option.setName("item").setDescription("Nom de l'objet").setRequired(true))
+						.addBooleanOption((option) => option.setName("visi").setDescription("Visibilité de l'objet").setRequired(true))
 				)
 		)
 	//#endregion
@@ -247,6 +271,27 @@ module.exports = {
 					interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
 				}
 
+			}
+
+			//Shop >> Item >> set >> options
+			else if (interaction.options._subcommand == "set") {
+				if (interaction.user.id == ADMIN) {
+					var objetNom = interaction.options.getString("item");
+					var visibility = interaction.options.getBoolean("visi");
+
+					try{
+						if(typeof boutique.shop.ShopObjet[objetNom] === "undefined") throw "No Item";
+						else{
+							boutique.shop.ShopObjet[objetNom].Visible = visibility;
+							fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
+							await interaction.reply({ content: "Nouvelle visibilité set", ephemeral: true });
+						}
+					}catch (err){
+						if(err == "No Item") await interaction.reply({ content: "No Item", ephemeral: true });
+					}
+				} else {
+					await interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
+				}
 			}
 		}
 
@@ -364,6 +409,27 @@ module.exports = {
 					interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
 				}
 			}
+
+			//Shop >> Item >> set >> options
+			else if (interaction.options._subcommand == "set") {
+				if (interaction.user.id == ADMIN) {
+					var objetNom = interaction.options.getString("item");
+					var visibility = interaction.options.getBoolean("visi");
+
+					try{
+						if(typeof boutique.shop.ShopArmes[objetNom] === "undefined") throw "No Item";
+						else{
+							boutique.shop.ShopArmes[objetNom].Visible = visibility;
+							fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
+							await interaction.reply({ content: "Nouvelle visibilité set", ephemeral: true });
+						}
+					}catch (err){
+						if(err == "No Item") await interaction.reply({ content: "No Item", ephemeral: true });
+					}
+				} else {
+					await interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
+				}
+			}
 		}
 
 		else if (interaction.options._group == "armure") {
@@ -457,6 +523,27 @@ module.exports = {
 					}
 				} else {
 					interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
+				}
+			}
+
+			//Shop >> Item >> set >> options
+			else if (interaction.options._subcommand == "set") {
+				if (interaction.user.id == ADMIN) {
+					var objetNom = interaction.options.getString("item");
+					var visibility = interaction.options.getBoolean("visi");
+
+					try{
+						if(typeof boutique.shop.ShopArmures[objetNom] === "undefined") throw "No Item";
+						else{
+							boutique.shop.ShopArmures[objetNom].Visible = visibility;
+							fs.writeFileSync("./donnees/Shop.json", JSON.stringify(boutique));
+							await interaction.reply({ content: "Nouvelle visibilité set", ephemeral: true });
+						}
+					}catch (err){
+						if(err == "No Item") await interaction.reply({ content: "No Item", ephemeral: true });
+					}
+				} else {
+					await interaction.reply({ content: "Vous n'avez pas le droit d'accéder à cette commande.", ephemeral: true })
 				}
 			}
 		}

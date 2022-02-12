@@ -212,8 +212,9 @@ module.exports = {
 
 			//Shop >> Item >> Buy >> options
 			else if (interaction.options._subcommand == "buy") {
-				joueurNom = interaction.options.getString("nom");
-				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom])) {
+				
+				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][interaction.options.getString("nom")])) {
+					joueurNom = interaction.options.getString("nom");
 					qtt = interaction.options.getInteger("qtty");
 					nomObjet = interaction.options.getString("item");
 					if (qtt <= 0) { qtt = 1; }
@@ -309,7 +310,7 @@ module.exports = {
 			}
 
 			else if (interaction.options._subcommand == "buy") {
-				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom])) {
+				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][interaction.options.getString("nom")])) {
 					nomObjet = interaction.options.getString("arme");
 					joueurNom = interaction.options.getString("nom");
 					try {
@@ -423,7 +424,7 @@ module.exports = {
 				}}
 
 			else if (interaction.options._subcommand == "buy") {
-				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][joueurNom])) {
+				if (interaction.user.id == ADMIN || (PERMISSIONS[interaction.user.id] !== null && PERMISSIONS[interaction.user.id][interaction.options.getString("nom")])) {
 					nomObjet = interaction.options.getString("armure");
 					joueurNom = interaction.options.getString("nom");
 					try {

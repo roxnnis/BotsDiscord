@@ -7,7 +7,7 @@
 	var bot = Discord.botCreate(JSON.parse(fs.readFileSync(`./bot/BotConfig.json`)).Token);
 
 //Salons Autorisés
-	const salonJDR = ["624474305018855449","924276882898321449"];
+	const salonJDR = ["624474305018855449","924276882898321449","659811273848127488"];
 
 //
 

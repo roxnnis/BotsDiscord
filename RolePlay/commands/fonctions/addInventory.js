@@ -1,9 +1,9 @@
 function AddInventory(rolistes,objet,joueurNom){
     if(objet.Stackable == false && typeof rolistes[joueurNom].Inv[nomObjet] !== "undefined")
     {
-        var i = 0;
-        while(i = 0 || typeof rolistes[joueurNom].Inv[nomObjet + i] !== "undefined"){i++;}
-        rolistes[joueurNom].Inv[nomObjet + i] = {
+        var i = 1;
+        while(typeof rolistes[joueurNom].Inv[nomObjet + " " + i] !== "undefined"){i++;}
+        rolistes[joueurNom].Inv[nomObjet + " " + i] = {
             Nom:objet.Nom,
             Quantity:objet.Quantity,
             Stackable:objet.Stackable,
@@ -103,5 +103,5 @@ function AddArmor({rolistes,objet}){
 }
 
 exports.AddInventory = AddInventory;
-exports.AddWeapon = AddWeapon;
 exports.AddArmor = AddArmor;
+exports.AddWeapon = AddWeapon;

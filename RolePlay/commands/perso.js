@@ -4,7 +4,7 @@ const fs = require("fs");
 
 const PInf = require(`${process.cwd()}/commands/fonctions/personnageInfo.js`);
 const PAdd = require(`${process.cwd()}/commands/fonctions/personnageAdd.js`);
-const AdIn = require(`${process.cwd()}/commands/fonctions/addInventory.js`);
+const AdIn = require("./fonctions/addInventory.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -120,23 +120,19 @@ module.exports = {
 			if(interaction.options._subcommand == "give")
 			{
 				joueurNom = interaction.options.getString("nom");
-				objetNom = interaction.options.getString("objet");
+				nomObjet = interaction.options.getString("objet");
 				qtt = interaction.options.getInteger("qtty");
 				visible = interaction.options.getBoolean("visi");
 				if(qtt <= 0){qtt = 1;}
 				try{
 					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else if(typeof boutique.shop.ShopObjet[objetNom] === "undefined") throw "No Item";
+					else if(typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
 					else{
-						console.log("ahahaha");
 						for(i=0;i<qtt;i++){
-							console.log(boutique.shop.ShopObjet[objetNom].Objet);
-							rolistes = AdIn.AddInventory(rolistes,boutique.shop.ShopObjet[objetNom].Objet,joueurNom);
-							console.log("ahahahahh");
-
+							rolistes = AdIn.AddInventory(rolistes,boutique.shop.ShopObjet[nomObjet].Objet,joueurNom);
 						}
 						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à reçu " + objetNom, ephemeral : visible});
+						await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
 					}
 				} catch(err){
 					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
@@ -149,13 +145,18 @@ module.exports = {
 			{
 				joueurNom = interaction.options.getString("nom");
 				objetNom = interaction.options.getString("objet");
-				visible = interaction.option.getBoolean("visi");
+				visible = interaction.options.getBoolean("visi");
 
 				try{
 					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else if(typeof rolistes[joueurNom].Inv[objetNom] === "undefined") throw "No Item";
 					else{
-						delete rolistes[joueurNom].Inv[objetNom];
+						for(var key in rolistes[joueurNom].Inv)
+						{
+							if(key.substring(0,objetNom.length) == objetNom)
+							{
+								delete rolistes[joueurNom].Inv[key];
+							}
+						}
 						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
 						await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
 					}
@@ -169,34 +170,41 @@ module.exports = {
 			{
 				joueurNom = interaction.options.getString("nom");
 				objetNom = interaction.options.getString("objet");
-				qtt = interaction.option.getInteger("qtty");
-
+				qtt = interaction.options.getInteger("qtty");
+				
 				if(qtt <= 0){qtt = 1;}
 				try{
 					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else if(typeof rolistes[joueurNom].Inv[objetNom] === "undefined") throw "No Item";
 					else{
-						if(typeof rolistes[joueurNom].Inv[objetNom].Remain !== "undefined")
+						var temponame = "";
+						for(var key in rolistes[joueurNom].Inv)
 						{
-							if(rolistes[joueurNom].Inv[objetNom].Remain >= qtt)
+							if(key.substring(0,objetNom.length) == objetNom && temponame == "")
 							{
-								rolistes[joueurNom].Inv[objetNom].Remain -= qtt;
+								temponame = key;
+							}
+						}
+						if(typeof rolistes[joueurNom].Inv[temponame].Remain !== "undefined")
+						{
+							if(rolistes[joueurNom].Inv[temponame].Remain >= qtt)
+							{
+								rolistes[joueurNom].Inv[temponame].Remain -= qtt;
 							}
 							else
 							{
-								rolistes[joueurNom].Inv[objetNom].Remain = 0;
+								rolistes[joueurNom].Inv[temponame].Remain = 0;
 							}
-							if(rolistes[joueurNom].Inv[objetNom].Remain == 0)
+							if(rolistes[joueurNom].Inv[temponame].Remain == 0)
 							{
-								delete rolistes[joueurNom].Inv[objetNom];
+								delete rolistes[joueurNom].Inv[temponame];
 							}
 						}
 						else
 						{
-							delete rolistes[joueurNom].Inv[objetNom];
+							delete rolistes[joueurNom].Inv[temponame];
 						}
 						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
+						await interaction.reply({ content: joueurNom + " à utilisé " + objetNom, ephemeral : false});
 					}
 				} catch(err){
 					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
@@ -219,4 +227,4 @@ module.exports = {
 			});
 		}
 	}
-};
+}

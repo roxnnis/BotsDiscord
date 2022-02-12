@@ -176,50 +176,58 @@ module.exports = {
 			//nom, objet, qtty
 			if(interaction.options._subcommand == "give")
 			{
-				joueurNom = interaction.options.getString("nom");
-				nomObjet = interaction.options.getString("objet");
-				qtt = interaction.options.getInteger("qtty");
-				visible = interaction.options.getBoolean("visi");
-				if(qtt <= 0){qtt = 1;}
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else if(typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
-					else{
-						for(i=0;i<qtt;i++){
-							rolistes = AdIn.AddInventory(rolistes,boutique.shop.ShopObjet[nomObjet].Objet,joueurNom);
+				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+					joueurNom = interaction.options.getString("nom");
+					nomObjet = interaction.options.getString("objet");
+					qtt = interaction.options.getInteger("qtty");
+					visible = interaction.options.getBoolean("visi");
+					if(qtt <= 0){qtt = 1;}
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else if(typeof boutique.shop.ShopObjet[nomObjet] === "undefined") throw "No Item";
+						else{
+							for(i=0;i<qtt;i++){
+								rolistes = AdIn.AddInventory(rolistes,boutique.shop.ShopObjet[nomObjet].Objet,joueurNom);
+							}
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
 						}
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 
 
 			if(interaction.options._subcommand == "del")
 			{
-				joueurNom = interaction.options.getString("nom");
-				objetNom = interaction.options.getString("objet");
-				visible = interaction.options.getBoolean("visi");
+				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+					joueurNom = interaction.options.getString("nom");
+					objetNom = interaction.options.getString("objet");
+					visible = interaction.options.getBoolean("visi");
 
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else{
-						for(var key in rolistes[joueurNom].Inv)
-						{
-							if(key.substring(0,objetNom.length) == objetNom)
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else{
+							for(var key in rolistes[joueurNom].Inv)
 							{
-								delete rolistes[joueurNom].Inv[key];
+								if(key.substring(0,objetNom.length) == objetNom)
+								{
+									delete rolistes[joueurNom].Inv[key];
+								}
 							}
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
 						}
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 
@@ -275,57 +283,65 @@ module.exports = {
 			//nom, objet, qtty
 			if(interaction.options._subcommand == "give")
 			{
-				joueurNom = interaction.options.getString("nom");
-				nomObjet = interaction.options.getString("arme");
-				visible = interaction.options.getBoolean("visi");
-				slot = interaction.options.getString("slot");
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else if(typeof boutique.shop.ShopArmes[nomObjet] === "undefined") throw "No Item";
-					else{
-						var tempo = AdIn.AddWeapon({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmes[nomObjet].Objet,slot : slot});
-						rolistes[joueurNom] = tempo[0];
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
+				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+					joueurNom = interaction.options.getString("nom");
+					nomObjet = interaction.options.getString("arme");
+					visible = interaction.options.getBoolean("visi");
+					slot = interaction.options.getString("slot");
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else if(typeof boutique.shop.ShopArmes[nomObjet] === "undefined") throw "No Item";
+						else{
+							var tempo = AdIn.AddWeapon({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmes[nomObjet].Objet,slot : slot});
+							rolistes[joueurNom] = tempo[0];
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
+						}
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 
 
 			if(interaction.options._subcommand == "del")
 			{
-				joueurNom = interaction.options.getString("nom");
-				objetNom = interaction.options.getString("arme");
-				visible = interaction.options.getBoolean("visi");
+				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+					joueurNom = interaction.options.getString("nom");
+					objetNom = interaction.options.getString("arme");
+					visible = interaction.options.getBoolean("visi");
 
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else{
-						if(rolistes[joueurNom].Weapons.Principale.Nom == objetNom)
-						{
-							rolistes[joueurNom].Weapons.Principale = {
-								Nom: "Aucune",
-								Type: "None",
-								Hand: 0,
-								Weight: 0,
-								Damage: 0,
-								Precision: 0,
-								Effects: { None: "Aucun effet" }
-							};
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else{
+							if(rolistes[joueurNom].Weapons.Principale.Nom == objetNom)
+							{
+								rolistes[joueurNom].Weapons.Principale = {
+									Nom: "Aucune",
+									Type: "None",
+									Hand: 0,
+									Weight: 0,
+									Damage: 0,
+									Precision: 0,
+									Effects: { None: "Aucun effet" }
+								};
+							}
+							else if(typeof rolistes[joueurNom].Weapons.Auxiliaire !== "undefined" && rolistes[joueurNom].Weapons.Auxiliaire.Nom == objetNom)
+							{
+								delete rolistes[joueurNom].Weapons.Auxiliaire;
+							}
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
 						}
-						else if(typeof rolistes[joueurNom].Weapons.Auxiliaire !== "undefined" && rolistes[joueurNom].Weapons.Auxiliaire.Nom == objetNom)
-						{
-							delete rolistes[joueurNom].Weapons.Auxiliaire;
-						}
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 
@@ -397,59 +413,63 @@ module.exports = {
 			//nom, objet, qtty
 			if(interaction.options._subcommand == "give")
 			{
-				joueurNom = interaction.options.getString("nom");
-				nomObjet = interaction.options.getString("arme");
-				visible = interaction.options.getBoolean("visi");
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else if(typeof boutique.shop.ShopArmures[nomObjet] === "undefined") throw "No Item";
-					else{
-						var tempo = AdIn.AddArmor({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmures[nomObjet].Objet});
-						rolistes[joueurNom] = tempo[0];
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
+				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+					joueurNom = interaction.options.getString("nom");
+					nomObjet = interaction.options.getString("arme");
+					visible = interaction.options.getBoolean("visi");
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
+						else if(typeof boutique.shop.ShopArmures[nomObjet] === "undefined") throw "No Item";
+						else{
+							var tempo = AdIn.AddArmor({rolistes : rolistes[joueurNom],objet : boutique.shop.ShopArmures[nomObjet].Objet});
+							rolistes[joueurNom] = tempo[0];
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							await interaction.reply({ content: joueurNom + " à reçu " + nomObjet, ephemeral : visible});
+						}
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 
 			if(interaction.options._subcommand == "del")
 			{
-				joueurNom = interaction.options.getString("nom");
-				objetNom = interaction.options.getString("arme");
-				visible = interaction.options.getBoolean("visi");
+				if (interaction.user.id == "185352234580574208" || interaction.user.id == "306020612747427841") {
+					joueurNom = interaction.options.getString("nom");
+					objetNom = interaction.options.getString("arme");
+					visible = interaction.options.getBoolean("visi");
 
-				try{
-					if(typeof rolistes[joueurNom] === "undefined") throw "No player";
-					else{
-						if(rolistes[joueurNom].Armors.Principale.Nom == objetNom)
-						{
-							rolistes[joueurNom].Armors.Principale = {
-								Nom: "Aucune",
-								Type: "None",
-								Weight: 0,
-								Res: {PHY: 0, MEN:0, OTHERS: {None: "None"}},
-								Effects: { None: "Aucun effet" }
-							};
-						}
+					try{
+						if(typeof rolistes[joueurNom] === "undefined") throw "No player";
 						else{
-							throw "No Item";
+							if(rolistes[joueurNom].Armors.Principale.Nom == objetNom)
+							{
+								rolistes[joueurNom].Armors.Principale = {
+									Nom: "Aucune",
+									Type: "None",
+									Weight: 0,
+									Res: {PHY: 0, MEN:0, OTHERS: {None: "None"}},
+									Effects: { None: "Aucun effet" }
+								};
+							}
+							else{
+								throw "No Item";
+							}
+							fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
+							await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
 						}
-						fs.writeFileSync("./donnees/Personnages.json", JSON.stringify(rolistes));
-						await interaction.reply({ content: joueurNom + " à perdu " + objetNom, ephemeral : visible});
+					} catch(err){
+						if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
+						else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
 					}
-				} catch(err){
-					if(err == "No player") await interaction.reply({ content: "Ce joueur n'existe pas", ephemeral: true});
-					else if(err == "No Item") await interaction.reply({ content: "Cet objet n'existe pas", ephemeral: true});
+				} else {
+					await interaction.reply({content: "Vous n'avez pas les droits pour effectuer cette commande", ephemeral:true});
 				}
 			}
 		}
-		
-		
-		
-		
 		else {
 			await interaction.reply({
 				content: "La commande n'a pas aboutie.",

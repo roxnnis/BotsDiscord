@@ -1,6 +1,7 @@
 {
     "base":["Loup-Garou", "Loup-Garou", "Voyante", "Sorcière", "Salvateur", "Chasseur"],
-    "carnage":["Loup-Garou", "Loup-Garou", "Cupidon", "Empoisonneuse", "Salvateur", "Chasseur"],"compo":
+    "carnage":["Loup-Garou", "Loup-Garou", "Cupidon", "Empoisonneuse", "Salvateur", "Chasseur"],
+	"compo":
         {
             "8":["Loup-Garou", "Loup-Garou", "Voyante", "Sorcière", "Cupidon", "Chasseur", "Simple Villageois", "Petite Fille"],
             "9":["Loup-Garou", "Loup-Garou", "Enfant Sauvage", "Voyante", "Sorcière", "Cupidon", "Chasseur", "Simple Villageois", "Petite Fille"],

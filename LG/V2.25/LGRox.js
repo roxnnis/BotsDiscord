@@ -153,7 +153,6 @@ bot.on('messageCreate', function (message) {
 bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
 	if (message.author.id != Config['gamemaster']) {
-		message.channel.send("Vous n'avez pas la permission de modifier la composition");
 		return;
 	}
 	messageCommande = message.content.toLowerCase().split(" ");

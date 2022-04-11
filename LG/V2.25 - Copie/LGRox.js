@@ -152,11 +152,13 @@ bot.on('messageCreate', function (message) {
 //Compo : Permet de gérer la partie
 bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
-	if (message.author.id != Config['gamemaster']) {
+	messageCommande = message.content.toLowerCase().split(" ");
+
+	if (message.author.id != Config['gamemaster'] && Config['state'] == 2 && messageCommande[0].startsWith(SettBot.Prefix + "compo")) {
 		message.channel.send("Vous n'avez pas la permission de modifier la composition");
 		return;
 	}
-	messageCommande = message.content.toLowerCase().split(" ");
+	
 
 	if (messageCommande[1] == "start") {
 		Config['state'] = 2;

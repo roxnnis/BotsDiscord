@@ -11,14 +11,14 @@ const { Collection } = require("discord.js");
 exports.refresh = function (bot, dir) {
 	bot.commands = new Collection();
 	const commands = [];
-	const commandFiles = fs.readdirSync(dir).filter(file => file.endsWith('.js'));
+	const commandFiles = fs.readdirSync(dir).filter(file => file.endsWith('.js')); // Récupération des noms des fichiers
 
 	// Bot / Guild ID
 	const clientId = '601836762008125460';
 	const guildId = ['342722397570465802', "659767673898663948"];
 
 	for (const file of commandFiles) {
-		const command = require(`${dir}/${file}`);
+		const command = require(`${dir}/${file}`); // Require
 		bot.commands.set(command.data.name, command);
 		commands.push(command.data.toJSON());
 		console.log("La commande \"" + command.data.name + "\" a été trouvée.");

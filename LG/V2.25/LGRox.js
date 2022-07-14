@@ -9,6 +9,7 @@ var fichier = fs.readFileSync("./JSON/Config.json");
 var fichier2 = fs.readFileSync("./JSON/Composition.json");
 
 var Config = JSON.parse(fichier);
+
 var Composition = JSON.parse(fichier2);
 
 //JS
@@ -38,7 +39,7 @@ var PACKS =
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Setup Bot (Assist-o-Bot)
-const { Client, Intents } = require('discord.js');
+const { Client, Intents, Permissions } = require('discord.js');
 const bot = new Client({
 	intents: [
 	  Intents.FLAGS.GUILDS,
@@ -55,7 +56,7 @@ bot.login(SettBot.Token);
 LG_Commands.Clear(); //Reset des paramètres de partie (sécurité)
 
 
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
 
 	//Choix du salon
@@ -96,7 +97,7 @@ const descriptions = JSON.parse(json);*/
 */
 
 //Start : Demande de join
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
 	if (!message.content.toLowerCase().startsWith(SettBot.Prefix+"start")) return;
 	if (Config['state'] != 0) return;
@@ -111,7 +112,7 @@ bot.on('message', function (message) {
 })
 
 //Start : //join rajoute la personne dans la partie
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
 	if (Config['state'] != 1) return;
 	if (message.content.toLowerCase() == SettBot.Prefix+"join") {
@@ -121,7 +122,7 @@ bot.on('message', function (message) {
 })
 
 //Membres : Voir la liste des joueurs
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
 	if (message.content == SettBot.Prefix+"membres") {
 		membres = ""
@@ -141,7 +142,7 @@ function AfficheCommandes(message) {
 }
 
 //help : Affiche les commandes
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
 	if (message.content != SettBot.Prefix+"help") return;
 	AfficheCommandes(message)
@@ -149,13 +150,15 @@ bot.on('message', function (message) {
 
 
 //Compo : Permet de gérer la partie
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
-	if (message.author.id != Config['gamemaster']) {
+	messageCommande = message.content.toLowerCase().split(" ");
+
+	if (message.author.id != Config['gamemaster'] && Config['state'] == 2 && messageCommande[0].startsWith(SettBot.Prefix + "compo")) {
 		message.channel.send("Vous n'avez pas la permission de modifier la composition");
 		return;
 	}
-	messageCommande = message.content.toLowerCase().split(" ");
+	
 
 	if (messageCommande[1] == "start") {
 		Config['state'] = 2;
@@ -254,13 +257,13 @@ function compte(message, listeRoles, listeJoueurs, role) {
 function grouping(listeJoueurs) {
 	var res = [];
 	for (var i = 0; i < listeJoueurs.length; i++) {
-		res.push({ id: listeJoueurs[i].id, allow: ['SEND_MESSAGES', 'VIEW_CHANNEL'], })
+		res.push({ id: listeJoueurs[i].id, allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.READ_MESSAGE_HISTORY, Permissions.FLAGS.SEND_MESSAGES]})
 	}
 	return res
 }
 
 //Tirage : Randomize la partie et attribue les rôles aux personnes
-bot.on('message', function (message) {
+bot.on('messageCreate', function (message) {
 	if (LG_Commands.Detection(message)) return;
 	if (message.content.toLowerCase() !== SettBot.Prefix+"tirage") return;
 	if (Config['state'] != 2) return;
@@ -279,7 +282,7 @@ bot.on('message', function (message) {
 		names.push(users[i].username);
 	}
 
-	var PartieBotGM = [{ id: Config['gamemaster'], allow: ['SEND_MESSAGES', 'VIEW_CHANNEL'] }, { id: '601836762008125460', allow: ['SEND_MESSAGES', 'VIEW_CHANNEL'] }, { id: Config['everyone'], deny: ['VIEW_CHANNEL'] }];
+	var PartieBotGM = [{ id: Config['gamemaster'], allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.READ_MESSAGE_HISTORY, Permissions.FLAGS.SEND_MESSAGES] }, { id: '601836762008125460', allow: [Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.READ_MESSAGE_HISTORY, Permissions.FLAGS.SEND_MESSAGES] }, { id: Config['everyone'], deny: [Permissions.FLAGS.VIEW_CHANNEL] }];
 	var PartieLoups = grouping(compte(message, Composition['listeRole'], users, "Loup-Garou"));
 	var GroupeLoups = PartieBotGM.concat(PartieLoups);
 
@@ -291,10 +294,10 @@ bot.on('message', function (message) {
 
 	if (Composition['group'].length != -1) {
 		if (Composition['group'].includes("Loup-Garou")) {
-			message.guild.createChannel('loup-garou', { type: 'channel', permissionOverwrites: GroupeLoups }).setChannelPositions(10).then(console.log).catch(console.error)
+			message.guild.channels.create('loup-garou', {type: "GUILD_TEXT", permissionOverwrites: GroupeLoups }).then(console.log).catch(console.error)
 		}
 		if (Composition['group'].includes("Cupidon")) {
-			message.guild.createChannel('couple', { type: 'channel', permissionOverwrites: PartieBotGM }).then(console.log).catch(console.error)
+			message.guild.channels.create('couple', {permissionOverwrites: PartieBotGM }).then(console.log).catch(console.error)
 		}
 	}
 	message.channel.send(`Le tirage est fait`);
